@@ -1,0 +1,62 @@
+{
+  "Header": {
+    "description": "Auto imported from components/Header.vue"
+  },
+  "LoginForm": {
+    "description": "Auto imported from components/LoginForm.vue"
+  },
+  "MailForm": {
+    "description": "Auto imported from components/MailForm.vue"
+  },
+  "NuxtLogo": {
+    "description": "Auto imported from components/NuxtLogo.vue"
+  },
+  "RegisterForm": {
+    "description": "Auto imported from components/RegisterForm.vue"
+  },
+  "ReserveCheck": {
+    "description": "Auto imported from components/ReserveCheck.vue"
+  },
+  "ReserveForm": {
+    "description": "Auto imported from components/ReserveForm.vue"
+  },
+  "ReviewCheckTable": {
+    "description": "Auto imported from components/ReviewCheckTable.vue"
+  },
+  "ReviewForm": {
+    "description": "Auto imported from components/ReviewForm.vue"
+  },
+  "ShopCreateDetail": {
+    "description": "Auto imported from components/ShopCreateDetail.vue"
+  },
+  "ShopCreateForm": {
+    "description": "Auto imported from components/ShopCreateForm.vue"
+  },
+  "ShopIndex": {
+    "description": "Auto imported from components/ShopIndex.vue"
+  },
+  "ShopUpdate": {
+    "description": "Auto imported from components/ShopUpdate.vue"
+  },
+  "ShopUpdateDetail": {
+    "description": "Auto imported from components/ShopUpdateDetail.vue"
+  },
+  "SideBarAdministrator": {
+    "description": "Auto imported from components/SideBarAdministrator.vue"
+  },
+  "SideBarMypage": {
+    "description": "Auto imported from components/SideBarMypage.vue"
+  },
+  "SideBarRepresentative": {
+    "description": "Auto imported from components/SideBarRepresentative.vue"
+  },
+  "Tutorial": {
+    "description": "Auto imported from components/Tutorial.vue"
+  },
+  "UserIndexTable": {
+    "description": "Auto imported from components/UserIndexTable.vue"
+  },
+  "ReserveCheckTable": {
+    "description": "Auto imported from components/reserveCheckTable.vue"
+  }
+}
