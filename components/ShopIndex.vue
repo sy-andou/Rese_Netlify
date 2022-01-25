@@ -119,7 +119,7 @@ export default {
         user_id: this.$auth.user.id,
         shop_id: shopId,
       };
-      await this.$axios.post("https://resebackend.herokuapp.com/api/favorite/", sendData);
+      await this.$axios.post("https://resebackend.herokuapp.com/api/favorite", sendData);
       alert('お気に入りに追加しました。');
       this.$emit("reload");
     },

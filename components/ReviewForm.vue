@@ -106,7 +106,8 @@ export default {
           };
           await this.$axios
             .put(
-              "https://resebackend.herokuapp.com/api/review/" + this.reviewList.id,
+              "https://resebackend.herokuapp.com/api/review/" +
+                this.reviewList.id,
               sendData
             )
             .then((response) => {

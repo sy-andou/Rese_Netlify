@@ -228,7 +228,7 @@ export default {
     },
     async getAllReserveData(){
       const allReserveData = await this.$axios.get(
-        "https://resebackend.herokuapp.com/api/reserve/"
+        "https://resebackend.herokuapp.com/api/reserve"
       );
       this.allReserveLists = allReserveData.data.data;
     },

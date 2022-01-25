@@ -92,7 +92,7 @@ export default {
   methods: {
     async getReserveData() {
       const reserveData = await this.$axios.get(
-        "https://resebackend.herokuapp.com/api/reserve/"
+        "https://resebackend.herokuapp.com/api/reserve"
       );
       this.reserveLists = reserveData.data.data
         .filter((reserveList) => {
@@ -114,14 +114,18 @@ export default {
         });
     },
     async getShopData() {
-      const shopData = await this.$axios.get("https://resebackend.herokuapp.com/api/shop/");
+      const shopData = await this.$axios.get(
+        "https://resebackend.herokuapp.com/api/shop"
+      );
       this.shopLists = shopData.data.data.filter((shopList) => {
         return shopList.user_id === this.$auth.user.id;
       });
     },
     /*地域のデータを一覧で取得*/
     async getAreaData() {
-      const areaData = await this.$axios.get("https://resebackend.herokuapp.com/api/area");
+      const areaData = await this.$axios.get(
+        "https://resebackend.herokuapp.com/api/area"
+      );
       this.areaLists = areaData.data.data;
     },
     /*ジャンルのデータを一覧で取得*/

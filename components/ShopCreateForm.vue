@@ -251,7 +251,7 @@ export default {
       if(event.target.files[0]){
         this.selected_file = event.target.files[0];
         this.file_name = event.target.files[0].name;
-        this.img_pass="https://resebackend.herokuapp.com/storage/"+this.file_name;
+        this.img_pass="https://resebackend.herokuapp.com/storage/" +this.file_name;
         this.imgUrl = URL.createObjectURL(this.$refs.preview.files[0]);
       }
     },
@@ -286,11 +286,11 @@ export default {
             area_id: this.area_id,
             genre_id: this.genre_id,
           };
-          await this.$axios.post("https://resebackend.herokuapp.com/api/shop/", sendData)
+          await this.$axios.post("https://resebackend.herokuapp.com/api/shop", sendData)
           .then((response) => {
             let formData = new FormData();
             formData.append("file", this.selected_file);
-            this.$axios.post("https://resebackend.herokuapp.com/api/storage/", formData);
+            this.$axios.post("https://resebackend.herokuapp.com/api/storage", formData);
             alert(response.data.message);
             this.$emit("reload");
           })

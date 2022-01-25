@@ -66,7 +66,7 @@ export default {
               reserve_id: id,
             };
             await this.$axios
-              .post("https://resebackend.herokuapp.com/api/review/", sendData)
+              .post("https://resebackend.herokuapp.com/api/review", sendData)
               .then((response) => {
                 alert(response.data.message);
                 this.$router.push("/representative");

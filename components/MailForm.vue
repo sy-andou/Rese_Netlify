@@ -103,9 +103,11 @@ export default {
         subject: this.subject,
         text: this.text,
       };
-      this.$axios.post("https://resebackend.herokuapp.com/api/mail/", sendData).then(() => {
-        alert("メールを送信しました");
-      });
+      this.$axios
+        .post("https://resebackend.herokuapp.com/api/mail", sendData)
+        .then(() => {
+          alert("メールを送信しました");
+        });
     },
     selectUser(permissionId) {
       this.address = this.userLists

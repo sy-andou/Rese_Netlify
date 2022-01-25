@@ -108,7 +108,7 @@ export default {
           routeName: this.$route.name,
         };
         await this.$axios
-          .post("https://resebackend.herokuapp.com/api/auth/register/", sendData)
+          .post("https://resebackend.herokuapp.com/api/auth/register", sendData)
           .then(() => {
             alert("仮登録が完了しました。");
             this.$emit("registerd");

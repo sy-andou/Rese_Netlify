@@ -112,7 +112,7 @@ export default {
         user_id: this.$auth.user.id,
         shop_id: shopId,
       };
-      await this.$axios.post("https://resebackend.herokuapp.com/api/favorite/", sendData);
+      await this.$axios.post("https://resebackend.herokuapp.com/api/favorite", sendData);
       alert('お気に入りに追加しました。');
       this.showShop(shopId);
     },
@@ -122,7 +122,7 @@ export default {
       });
       const favoriteId = favorite.id;
       await this.$axios.delete(
-        "https://resebackend.herokuapp.com/api/favorite/" + favoriteId
+        "https://resebackend.herokuapp.com/api/favorite" + favoriteId
       );
       alert('お気に入りから削除しました。');
       this.showShop(shopId);
