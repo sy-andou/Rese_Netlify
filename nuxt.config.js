@@ -58,6 +58,10 @@ export default {
   // Build Configuration: https://go.nuxtjs.dev/config-build
   build: {
   },
+  // Netlifyで動的ページを表示するために記述
+  generate: {
+    fallback: true
+  },
   auth: {
     strategies: {
       'laravelJWT': {
