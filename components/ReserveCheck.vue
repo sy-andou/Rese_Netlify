@@ -297,7 +297,7 @@ export default {
       }
     },
     showReserves(id) {
-      return "http://localhost:3000/reserves/" + id;
+      return "https://rese-syand.netlify.app/reserves/" + id;
     },
     displayDate(date) {
       if (this.dateState === "collapse" || date) {
