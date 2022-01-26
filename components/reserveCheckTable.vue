@@ -465,8 +465,8 @@ td {
   }
   form {
     display: grid;
-    grid-template-columns: 50% 50%;
-    grid-template-rows: 50% 50%;
+    grid-template-columns: 50% 49%;
+    grid-template-rows: 50% 49%;
   }
   form > select,
   form > input,

@@ -224,6 +224,8 @@ h4 {
 .reserveStatusStyle {
   border-radius: 2px;
 }
+.review-create-container{
+}
 @media screen and (max-width: 768px) {
   .sidebar {
     bottom: 0;

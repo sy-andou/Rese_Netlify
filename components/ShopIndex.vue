@@ -396,14 +396,16 @@ input{
   form > select,
   form > input {
     width:100%;
-    border-radius:5px;
+    border-radius:0;
     over-flow:hidden;
   }
-  select:first-child {
-    border-radius:5px ;
+  .shop-wrapper {
+    display: block;
   }
   .shop-container{
+    width:100%;
     margin:0 0 15px 0;
+    border-radius:0;
   }
 }
 </style>

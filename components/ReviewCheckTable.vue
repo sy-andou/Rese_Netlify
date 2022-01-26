@@ -270,7 +270,6 @@ td {
   text-align: left;
 }
 .user-index-wrapper {
-
   height: 100%;
   padding:0 20px 20px 20px;
   background-color: white;
@@ -306,8 +305,11 @@ td {
   }
   .th-container{
     display:grid;
-    grid-template-columns:50% 50%;
+    grid-template-columns:50% 45%;
     padding:0;
+  }
+  input,select {
+    
   }
   .th-email{
     display:none;
