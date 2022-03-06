@@ -1,6 +1,10 @@
 <template>
   <div>
-    <p>{{ shopLists }}</p>
+    <p>
+      <img
+        src="https://reseimgbucket.s3.ap-northeast-3.amazonaws.com/elephant.png"
+      />
+    </p>
   </div>
 </template>
 <script>
