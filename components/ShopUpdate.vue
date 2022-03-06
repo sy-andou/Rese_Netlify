@@ -301,7 +301,7 @@ export default {
       if(event.target.files[0]){
         this.selected_file = event.target.files[0];
         this.file_name = event.target.files[0].name;
-        this.img_pass="https://resebackend.herokuapp.com/storage/"+this.file_name;
+        this.img_pass="https://reseimgbucket.s3.ap-northeast-3.amazonaws.com/"+this.file_name;
         this.imgUrl = URL.createObjectURL(this.$refs.preview.files[0])
       }
     },
