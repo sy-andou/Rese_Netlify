@@ -6,7 +6,7 @@
     <div class="pages-container">
       <Nuxt />
     </div>
-    <Loading />
+    <Loading v-show="loading" />
   </div>
 </template>
 <script>
