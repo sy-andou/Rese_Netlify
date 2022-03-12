@@ -324,8 +324,10 @@ export default {
               area_id: area,
               genre_id: genre,
             };
+            this.$nuxt.$emit("setLoading");
             await this.$axios.put("https://resebackend.herokuapp.com/api/shop/" +id, sendData)
               .then((response)=>{
+                this.$nuxt.$emit("setLoading");
                 alert(response.data.message);
               });
           }
@@ -342,8 +344,10 @@ export default {
               area_id: area,
               genre_id: genre,
             };
+            this.$nuxt.$emit("setLoading");
             await this.$axios.put("https://resebackend.herokuapp.com/api/shop/" +id, sendData)
               .then((response)=>{
+                this.$nuxt.$emit("setLoading");
                 let formData = new FormData();
                 formData.append("file", this.selected_file);
                 this.$axios.post("https://resebackend.herokuapp.com/api/storage", formData);
@@ -357,6 +361,7 @@ export default {
         }
       }
       catch(response) {
+          this.$nuxt.$emit("setLoading");
           var status = response.response.status;
           if (status == 400) {
             var errors = response.response.data.errors;
@@ -379,7 +384,9 @@ export default {
     },
     async deleteShop(id) {
       if (window.confirm("店舗情報を削除いたしますか？")) {
+        this.$nuxt.$emit("setLoading");
         await this.$axios.delete("https://resebackend.herokuapp.com/api/shop/" + this.shopList.id);
+        this.$nuxt.$emit("setLoading");
         alert("店舗情報を削除しました。");
         this.$emit("reload");
       }

@@ -286,8 +286,10 @@ export default {
             area_id: this.area_id,
             genre_id: this.genre_id,
           };
+          this.$nuxt.$emit("setLoading");
           await this.$axios.post("https://resebackend.herokuapp.com/api/shop", sendData)
           .then((response) => {
+            this.$nuxt.$emit("setLoading");
             let formData = new FormData();
             formData.append("file", this.selected_file);
             this.$axios.post("https://resebackend.herokuapp.com/api/storage", formData);
@@ -298,6 +300,7 @@ export default {
           alert("店舗情報を作成しました。");
         }
       } catch (response) {
+          this.$nuxt.$emit("setLoading");
           var status = response.response.status;
           if (status == 400) {
             var errors = response.response.data.errors;

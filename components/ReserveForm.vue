@@ -197,9 +197,11 @@ export default {
               time: this.time,
               number: this.number,
             };
+            this.$nuxt.$emit("setLoading");
             let reserveCreateData = await this.$axios
               .post("https://resebackend.herokuapp.com/api/reserve", sendData)
               .then((response) => {
+                this.$nuxt.$emit("setLoading");
                 alert(response.data.message);
                 this.$router.push("/done");
               });
@@ -207,6 +209,7 @@ export default {
             alert("予約は実施されませんでした。");
           }
         } catch (response) {
+          this.$nuxt.$emit("setLoading");
           var status = response.response.status;
           if (status == 400) {
             var errors = response.response.data.errors;

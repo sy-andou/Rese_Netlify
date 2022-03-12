@@ -103,9 +103,11 @@ export default {
         subject: this.subject,
         text: this.text,
       };
-      this.$axios
+      this.$nuxt.$emit("setLoading");
+      await this.$axios
         .post("https://resebackend.herokuapp.com/api/mail", sendData)
         .then(() => {
+          this.$nuxt.$emit("setLoading");
           alert("メールを送信しました");
         });
     },

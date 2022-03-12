@@ -234,16 +234,19 @@ export default {
               time: time,
               number: number,
             };
+            this.$nuxt.$emit("setLoading");
             await this.$axios
               .put("https://resebackend.herokuapp.com/api/reserve/" + id, sendData)
               .then((response) => {
                 alert(response.data.message);
                 this.$emit("reload");
               });
+              this.$nuxt.$emit("setLoading");
           } else {
             alert("予約内容は変更されませんでした。");
           }
         } catch (response) {
+            this.$nuxt.$emit("setLoading");
             if (!this.$auth.loggedIn) {
               this.$router.replace("/login");
             }
@@ -267,7 +270,9 @@ export default {
     async deleteReserve(id) {
       if(this.reserveList.user_id === this.$auth.user.id){
         if (window.confirm("予約をキャンセルいたしますか？")) {
+          this.$nuxt.$emit("setLoading");
           await this.$axios.delete("https://resebackend.herokuapp.com/api/reserve/" + id);
+          this.$nuxt.$emit("setLoading");
           alert('予約をキャンセルしました。');
           this.$emit("reload");
         }

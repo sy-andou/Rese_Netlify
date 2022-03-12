@@ -107,13 +107,16 @@ export default {
           permission_id: this.loginCheck,
           routeName: this.$route.name,
         };
+        this.$nuxt.$emit("setLoading");
         await this.$axios
           .post("https://resebackend.herokuapp.com/api/auth/register", sendData)
           .then(() => {
+            this.$nuxt.$emit("setLoading");
             alert("仮登録が完了しました。");
             this.$emit("registerd");
           });
       } catch (response) {
+        this.$nuxt.$emit("setLoading");
         var status = response.response.status;
         if (status == 400) {
           var errors = response.response.data.errors;

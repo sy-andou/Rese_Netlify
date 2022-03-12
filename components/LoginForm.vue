@@ -78,6 +78,7 @@ export default {
   methods: {
     async login() {
       try {
+        this.$nuxt.$emit("setLoading");
         await this.$auth
           .loginWith("laravelJWT", {
             data: {
@@ -86,6 +87,7 @@ export default {
             },
           })
           .then(() => {
+            this.$nuxt.$emit("setLoading");
             if (this.$auth.user.permission_id === 3) {
               this.$router.push("/administrator");
             } else if (this.$auth.user.permission_id === 2) {
@@ -95,6 +97,7 @@ export default {
             }
           });
       } catch (response) {
+        this.$nuxt.$emit("setLoading");
         let status = response.response.status;
         if (status == 400) {
           var errors = response.response.data.errors;

@@ -11,9 +11,25 @@
 <script>
 export default {
   data() {
-    return {};
+    return {
+      loading: false,
+    };
   },
-  method: {},
+  methods: {
+    setListner() {
+      this.$nuxt.$on("setLoading", this.setLoading);
+    },
+    setLoading() {
+      if (this.loading === false) {
+        this.loading = true;
+      } else {
+        this.loading = false;
+      }
+    },
+  },
+  created() {
+    this.setListner();
+  },
 };
 </script>
 <style>
