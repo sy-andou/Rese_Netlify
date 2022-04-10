@@ -104,7 +104,7 @@ export default {
         text: this.text,
       };
       this.$axios
-        .post("https://resebackend.herokuapp.com/api/mail/", sendData)
+        .post("https://resebackend.herokuapp.com/api/mail", sendData)
         .then(() => {
           this.$nuxt.$emit("setLoading");
           alert("メールを送信しました");

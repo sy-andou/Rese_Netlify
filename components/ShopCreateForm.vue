@@ -286,11 +286,11 @@ export default {
             genre_id: this.genre_id,
           };
           this.$nuxt.$emit("setLoading");
-          await this.$axios.post("https://resebackend.herokuapp.com/api/shop/", sendData)
+          await this.$axios.post("https://resebackend.herokuapp.com/api/shop", sendData)
           .then((response) => {
             let formData = new FormData();
             formData.append("file", this.selected_file);
-            this.$axios.post("https://resebackend.herokuapp.com/api/storage/", formData);
+            this.$axios.post("https://resebackend.herokuapp.com/api/storage", formData);
             this.$nuxt.$emit("setLoading");
             alert(response.data.message);
             this.$emit("reload");

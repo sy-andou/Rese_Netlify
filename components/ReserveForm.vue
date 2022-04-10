@@ -205,7 +205,7 @@ export default {
               number: this.number,
             };
             let reserveCreateData = await this.$axios
-              .post("https://resebackend.herokuapp.com/api/reserve/", sendData)
+              .post("https://resebackend.herokuapp.com/api/reserve", sendData)
               .then((response) => {
                 alert(response.data.message);
                 this.$router.push("/done");

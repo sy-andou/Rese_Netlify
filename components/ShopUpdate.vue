@@ -348,7 +348,7 @@ export default {
               .then((response)=>{
                 let formData = new FormData();
                 formData.append("file", this.selected_file);
-                this.$axios.post("https://resebackend.herokuapp.com/api/storage/", formData);
+                this.$axios.post("https://resebackend.herokuapp.com/api/storage", formData);
                 this.$nuxt.$emit("setLoading");
                 alert(response.data.message);
               });
