@@ -73,7 +73,7 @@ export default {
         user_id: this.$auth.user.id,
         shop_id: this.$route.params.shopId,
       };
-      await this.$axios.post("http://127.0.0.1:8000/api/favorite/", sendData);
+      await this.$axios.post("https://resebackend.herokuapp.com/api/favorite/", sendData);
       alert('お気に入りに追加しました。');
       this.$store.dispatch("shops/getShopsData");
     },
@@ -82,7 +82,7 @@ export default {
         return favoriteList.user_id===this.$auth.user.id;
       }).id;
       await this.$axios.delete(
-        "http://127.0.0.1:8000/api/favorite/" + favoriteId
+        "https://resebackend.herokuapp.com/api/favorite/" + favoriteId
       );
       alert('お気に入りから削除しました。');
       this.$store.dispatch("shops/getShopsData");
