@@ -1,44 +1,42 @@
 <template>
   <div class="index-wrapper">
+    <SearchShops />
     <div class="shop-index-wrapper">
-      <ShopIndex
-        v-bind:shop-lists="shopLists"
-        v-on:reload="getShopData"
-        class="shop-index"
-      />
+      <div
+        v-for="shopList in getSearchShopLists"
+        v-bind:key="shopList.id"
+        class="shop-index-container"
+      >
+        <ShopIndex v-bind:shop-list="shopList" class="shop-index" />
+      </div>
     </div>
   </div>
 </template>
-
 <script>
 export default {
   data() {
-    return {
-      shopLists: [],
-    };
+    return {};
   },
-  methods: {
-    /*店舗のデータを一覧で取得*/
-    async getShopData() {
-      const shopData = await this.$axios.get(
-        "https://resebackend.herokuapp.com/api/shop"
+  methods: {},
+  computed: {
+    getSearchShopLists() {
+      return this.$store.getters["shops/getSearchShopLists"](
+        this.$store.state.areas.selectAreaId,
+        this.$store.state.genres.selectGenreId,
+        this.$store.state.shops.inputShopName
       );
-      this.shopLists = shopData.data.data;
     },
   },
-  computed: {},
-  created() {
-    this.getShopData();
-  },
+  created() {},
 };
 </script>
 
 <style scoped>
-.index-wrapper {
-  width: 100%;
-  posiition: relative;
-}
 .shop-index-wrapper {
+  display: flex;
+  flex-wrap: wrap;
+}
+.shop-index-container {
   margin: 15px 0;
 }
 @media screen and (max-width: 768px) {

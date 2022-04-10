@@ -1,141 +1,136 @@
 <template>
-  <div>
-    <form>
-      <select v-model="search.reserveStatus">
-        <option value="">予約状況</option>
-        <option value="予約中">予約中</option>
-        <option value="本日">本日</option>
-        <option value="予約日超過">予約日超過</option>
-        <option value="来店済">来店済</option>
-        <option value="予約削除済">予約削除済</option>
-      </select>
-      <input v-model="search.shopName" type="search" placeholder="店舗名" />
-      <input v-model="search.userName" type="search" placeholder="予約者名" />
-      <div class="input-date-container">
-        <label v-show="dateState === 'collapse'">来店日</label>
-        <input
-          v-model="search.reserveDate"
-          v-bind:style="inputCssVars"
-          v-on:focus="displayDate(search.reserveDate)"
-          v-on:blur="displayDate(search.reserveDate)"
-          type="date"
-          placeholder="来店日"
-        />
-      </div>
-    </form>
-    <div class="reserve-check-wrapper">
-      <table>
-        <tr class="th-contaier">
-          <th>
-            <select v-model="search.reserveStatus">
-              <option value="">予約状況</option>
-              <option value="予約中">予約中</option>
-              <option value="本日">本日</option>
-              <option value="予約日超過">予約日超過</option>
-              <option value="来店済">来店済</option>
-              <option value="予約削除済">予約削除済</option>
-            </select>
-          </th>
-          <th>
-            <input
-              v-model="search.shopName"
-              type="search"
-              placeholder="店舗名"
-            />
-          </th>
-          <th>
-            <input
-              v-model="search.reserveTitle"
-              type="search"
-              placeholder="予約タイトル"
-            />
-          </th>
-          <th>
-            <input
-              v-model="search.userName"
-              type="search"
-              placeholder="予約者名"
-            />
-          </th>
-          <th>
-            <select v-model="search.reserveNumber">
-              <option value="">予約人数</option>
-              <option
-                v-for="reserveList in searchForNumberReserveLists"
-                v-bind:key="reserveList.id"
-                v-bind:value="reserveList.number"
-              >
-                {{ reserveList.number }}人
-              </option>
-            </select>
-          </th>
-          <th class="input-date-container">
-            <label v-show="dateState === 'collapse'">来店日</label>
-            <input
-              v-model="search.reserveDate"
-              v-bind:style="inputCssVars"
-              v-on:focus="displayDate(search.reserveDate)"
-              v-on:blur="displayDate(search.reserveDate)"
-              type="date"
-              placeholder="来店日"
-            />
-          </th>
-          <th>
-            <select v-model="search.reserveTime">
-              <option value="">来店時間</option>
-              <option
-                v-for="reserveList in searchForTimeReserveLists"
-                v-bind:key="reserveList.id"
-                v-bind:value="reserveList.time"
-              >
-                {{ reserveList.time }}
-              </option>
-            </select>
-          </th>
-        </tr>
-        <tr
-          v-for="reserveList in searchAndPaginateReserveLists"
-          v-bind:key="reserveList.id"
-        >
-          <td
-            v-bind:style="reserveStatusStyle(reserveList)"
-            class="reserveStatusStyle"
+  <div class="reserve-check-wrapper">
+    <table>
+      <tr class="th-contaier">
+        <th>
+          <select
+            v-on:change="searchStatus($event)"
+            v-bind:value="$store.state.reserves.search.status"
           >
-            {{ reserveStatus(reserveList) }}
-          </td>
-          <td class="reserveShopName">{{ reserveList.shop.name }}</td>
-          <td class="reserveTitle">{{ reserveList.name }}</td>
-          <td class="reserveuserName">{{ reserveList.user.name }}</td>
-          <td class="reserveNumber">{{ reserveList.number }}人</td>
-          <td class="reserveDate">{{ reserveList.date }}</td>
-          <td class="reserveTime">{{ reserveList.time }}</td>
-        </tr>
-      </table>
-      <div class="paginate-container">
-        <paginate
-          :page-count="getPageCount"
-          :page-range="3"
-          :margin-pages="2"
-          :click-handler="clickCallback"
-          :prev-text="'＜'"
-          :next-text="'＞'"
-          :container-class="'pagination'"
-          :page-class="'page-item'"
-          :page-link-class="'page-link'"
-          :prev-class="'prev'"
-          :prev-link-class="'prev-link'"
-          :next-class="'next'"
-          :next-link-class="'next-link'"
+            <option value="">予約状況</option>
+            <option value="予約中">予約中</option>
+            <option value="本日の予約">本日の予約</option>
+            <option value="予約日超過">予約日超過</option>
+            <option value="レビュー未投稿">来店済(レビュー未投稿)</option>
+            <option value="レビュー投稿済">来店済(レビュー投稿済)</option>
+            <option value="予約削除済">予約削除済</option>
+          </select>
+        </th>
+        <th>
+          <select
+            v-on:change="searchShopId($event)"
+            v-bind:value="$store.state.reserves.search.shopId"
+          >
+            <option value="">店舗名</option>
+            <option
+              v-for="searchShopList in searchShopLists"
+              v-bind:key="searchShopList.id"
+              v-bind:value="searchShopList.id"
+            >
+              {{ searchShopList.name }}
+            </option>
+          </select>
+        </th>
+        <th>
+          <input
+            v-on:change.prevent="searchTitle"
+            v-bind:value="$store.state.reserves.search.title"
+            type="search"
+            placeholder="予約タイトル"
+          />
+        </th>
+        <th>
+          <input
+            v-on:change.prevent="searchName"
+            v-bind:value="$store.state.reserves.search.name"
+            type="search"
+            placeholder="予約者名"
+          />
+        </th>
+        <th>
+          <select
+            v-bind:value="$store.state.reserves.search.number"
+            v-on:change.prevent="searchNumber($event)"
+          >
+            <option value="">予約人数</option>
+            <option
+              v-for="searchNumberList in searchNumberLists"
+              v-bind:key="searchNumberList.id"
+              v-bind:value="searchNumberList.number"
+            >
+              {{ searchNumberList.number }}人
+            </option>
+          </select>
+        </th>
+        <th class="input-date-container">
+          <label v-show="dateState === 'collapse'">来店日</label>
+          <input
+            v-bind:value="$store.state.reserves.search.date"
+            v-bind:style="inputCssVars"
+            v-on:change.prevent="searchDate"
+            v-on:focus="displayDate(search.reserveDate)"
+            v-on:blur="displayDate(search.reserveDate)"
+            type="date"
+            placeholder="来店日"
+          />
+        </th>
+        <th>
+          <select
+            v-bind:value="$store.state.reserves.search.time"
+            v-on:change.prevent="searchTime($event)"
+          >
+            <option value="">来店時間</option>
+            <option
+              v-for="searchTimeList in searchTimeLists"
+              v-bind:key="searchTimeList.id"
+              v-bind:value="searchTimeList.time"
+            >
+              {{ searchTimeList.time }}
+            </option>
+          </select>
+        </th>
+      </tr>
+      <tr
+        v-for="reserveList in searchAndPaginateReserveLists"
+        v-bind:key="reserveList.id"
+      >
+        <td
+          v-bind:style="reserveStatusStyle(reserveList)"
+          class="reserveStatusStyle"
         >
-        </paginate>
-      </div>
+          {{ reserveList.status }}
+        </td>
+        <td class="reserveShopName">{{ reserveList.shop.name }}</td>
+        <td class="reserveTitle">{{ reserveList.name }}</td>
+        <td class="reserveuserName">{{ reserveList.user.name }}</td>
+        <td class="reserveNumber">{{ reserveList.number }}人</td>
+        <td class="reserveDate">{{ reserveList.date }}</td>
+        <td class="reserveTime">{{ reserveList.time }}</td>
+      </tr>
+    </table>
+    <div class="paginate-container">
+      <paginate
+        :page-count="getPageCount"
+        :page-range="3"
+        :margin-pages="2"
+        :click-handler="clickCallback"
+        :prev-text="'＜'"
+        :next-text="'＞'"
+        :container-class="'pagination'"
+        :page-class="'page-item'"
+        :page-link-class="'page-link'"
+        :prev-class="'prev'"
+        :prev-link-class="'prev-link'"
+        :next-class="'next'"
+        :next-link-class="'next-link'"
+      >
+      </paginate>
     </div>
   </div>
 </template>
 <script>
 import moment from "moment";
 export default {
-  props: ["reserveLists"],
   data() {
     return {
       dateState: "collapse",
@@ -143,15 +138,6 @@ export default {
         pageCount: "",
         currentPage: 1,
         parPage: 10,
-      },
-      search: {
-        shopName: "",
-        userName: "",
-        reserveDate: "",
-        reserveTime: "",
-        reserveStatus: "",
-        reserveTitle: "",
-        reserveNumber: "",
       },
     };
   },
@@ -166,144 +152,82 @@ export default {
         this.dateState = "collapse";
       }
     },
+    searchStatus(event) {
+      this.$store.commit("reserves/setSearchStatus", event.target.value);
+    },
+    searchShopId(event) {
+      this.$store.commit("reserves/setSearchShopId", event.target.value);
+    },
+    searchTitle(event) {
+      this.$store.commit("reserves/setSearchTitle", event.target.value);
+    },
+    searchName(event) {
+      this.$store.commit("reserves/setSearchName", event.target.value);
+    },
+    searchNumber(event) {
+      this.$store.commit("reserves/setSearchNumber", event.target.value);
+    },
+    searchDate(event) {
+      this.$store.commit("reserves/setSearchDate", event.target.value);
+    },
+    searchTime(event) {
+      this.$store.commit("reserves/setSearchTime", event.target.value);
+    },
   },
   computed: {
-    /*検索用の予約人数一覧を作成*/
-    searchForNumberReserveLists() {
-      const searchReserveLists = this.reserveLists.filter(
-        (reserveList, index) => {
+    /*検索用の店舗一覧を作成*/
+    searchShopLists() {
+      return this.$store.state.reserves.representativeReserveLists
+        .filter((reserveList, index) => {
           return (
-            this.reserveLists
+            this.$store.state.reserves.representativeReserveLists
+              .map((reserveList) => {
+                return reserveList.shop_id;
+              })
+              .indexOf(reserveList.shop_id) === index
+          );
+        })
+        .map((reserveList) => {
+          return reserveList.shop;
+        });
+    },
+    /*検索用の予約人数一覧を作成*/
+    searchNumberLists() {
+      return this.$store.state.reserves.representativeReserveLists
+        .filter((reserveList, index) => {
+          return (
+            this.$store.state.reserves.representativeReserveLists
               .map((reserveList) => {
                 return reserveList.number;
               })
               .indexOf(reserveList.number) === index
           );
-        }
-      );
-      return searchReserveLists;
+        })
+        .sort((reserveA, reserveB) => {
+          return reserveA.number > reserveB.number ? 1 : -1;
+        });
     },
-    /*検索用の予約時間一覧を作成*/
-    searchForTimeReserveLists() {
-      const searchReserveLists = this.reserveLists.filter(
-        (reserveList, index) => {
+    /*検索用の来店時間一覧を作成*/
+    searchTimeLists() {
+      return this.$store.state.reserves.representativeReserveLists
+        .filter((reserveList, index) => {
           return (
-            this.reserveLists
+            this.$store.state.reserves.representativeReserveLists
               .map((reserveList) => {
                 return reserveList.time;
               })
               .indexOf(reserveList.time) === index
           );
-        }
-      );
-      return searchReserveLists;
+        })
+        .sort((reserveA, reserveB) => {
+          return reserveA.time > reserveB.time ? 1 : -1;
+        });
     },
     /*検索内容から検索結果を表示*/
     searchAndPaginateReserveLists() {
-      let searchAndPaginateReserveLists = this.reserveLists;
-      if (this.search.reserveStatus) {
-        switch (this.search.reserveStatus) {
-          case "予約削除済":
-            searchAndPaginateReserveLists =
-              searchAndPaginateReserveLists.filter(
-                (searchAndPaginateReserveList) => {
-                  return searchAndPaginateReserveList.deleted_at !== null;
-                }
-              );
-            break;
-          case "来店済":
-            searchAndPaginateReserveLists =
-              searchAndPaginateReserveLists.filter(
-                (searchAndPaginateReserveList) => {
-                  return searchAndPaginateReserveList.review !== null;
-                }
-              );
-            break;
-          case "本日":
-            searchAndPaginateReserveLists =
-              searchAndPaginateReserveLists.filter(
-                (searchAndPaginateReserveList) => {
-                  return (
-                    searchAndPaginateReserveList.date ===
-                      moment().format("YYYY-MM-DD") &&
-                    searchAndPaginateReserveList.review === null &&
-                    searchAndPaginateReserveList.deleted_at === null
-                  );
-                }
-              );
-            break;
-          case "予約中":
-            searchAndPaginateReserveLists =
-              searchAndPaginateReserveLists.filter(
-                (searchAndPaginateReserveList) => {
-                  return (
-                    searchAndPaginateReserveList.date >
-                      moment().format("YYYY-MM-DD") &&
-                    searchAndPaginateReserveList.deleted_at === null
-                  );
-                }
-              );
-            break;
-          case "予約日超過":
-            searchAndPaginateReserveLists =
-              searchAndPaginateReserveLists.filter(
-                (searchAndPaginateReserveList) => {
-                  return (
-                    searchAndPaginateReserveList.date <
-                      moment().format("YYYY-MM-DD") &&
-                    searchAndPaginateReserveList.review === null &&
-                    searchAndPaginateReserveList.deleted_at === null
-                  );
-                }
-              );
-            break;
-        }
-      }
-      if (this.search.shopName) {
-        searchAndPaginateReserveLists = searchAndPaginateReserveLists.filter(
-          (searchAndPaginateReserveList) => {
-            return searchAndPaginateReserveList.shop.name.includes(
-              this.search.shopName
-            );
-          }
-        );
-      }
-      if (this.search.reserveTitle) {
-        searchAndPaginateReserveLists = searchAndPaginateReserveLists.filter(
-          (searchAndPaginateReserveList) => {
-            return searchAndPaginateReserveList.name.includes(
-              this.search.reserveTitle
-            );
-          }
-        );
-      }
-      if (this.search.userName) {
-        searchAndPaginateReserveLists = searchAndPaginateReserveLists.filter(
-          (searchAndPaginateReserveList) => {
-            return searchAndPaginateReserveList.user.name.includes(
-              this.search.userName
-            );
-          }
-        );
-      }
-      if (this.search.reserveDate) {
-        searchAndPaginateReserveLists = searchAndPaginateReserveLists.filter(
-          (searchAndPaginateReserveList) => {
-            return (
-              searchAndPaginateReserveList.date === this.search.reserveDate
-            );
-          }
-        );
-      }
-      if (this.search.reserveTime) {
-        searchAndPaginateReserveLists = searchAndPaginateReserveLists.filter(
-          (searchAndPaginateReserveList) => {
-            return (
-              searchAndPaginateReserveList.time === this.search.reserveTime
-            );
-          }
-        );
-      }
+      let searchAndPaginateReserveLists = this.$store.getters[
+        "reserves/getSearchReserveLists"
+      ](this.$store.state.reserves.representativeReserveLists);
       this.paginate.pageCount = searchAndPaginateReserveLists.length;
       let end = this.paginate.currentPage * this.paginate.parPage;
       let start = end - this.paginate.parPage;
@@ -311,24 +235,6 @@ export default {
     },
     getPageCount: function () {
       return Math.ceil(this.paginate.pageCount / this.paginate.parPage);
-    },
-    reserveStatus() {
-      return function (reserveList) {
-        let today = moment().format("YYYY-MM-DD");
-        if (reserveList.deleted_at) {
-          return "予約削除済";
-        }
-        if (reserveList.review !== null) {
-          return "来店済";
-        }
-        if (reserveList.date === today) {
-          return "本日";
-        } else if (reserveList.date > today) {
-          return "予約中";
-        } else if (reserveList.date < today) {
-          return "予約日超過";
-        }
-      };
     },
     reserveStatusStyle() {
       return function (reserveList) {
@@ -364,6 +270,7 @@ export default {
       };
     },
   },
+  created() {},
 };
 </script>
 
@@ -465,8 +372,8 @@ td {
   }
   form {
     display: grid;
-    grid-template-columns: 50% 49%;
-    grid-template-rows: 50% 49%;
+    grid-template-columns: 50% 50%;
+    grid-template-rows: 50% 50%;
   }
   form > select,
   form > input,

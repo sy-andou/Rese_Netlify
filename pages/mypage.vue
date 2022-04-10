@@ -11,12 +11,13 @@
     <div class="mypage-container">
       <div v-if="favoriteShopIndex" class="shopIndex-wrapper">
         <h3>お気に入り店舗一覧</h3>
-        <ShopIndex
-          v-bind:shop-lists="shopLists"
-          v-on:reload="getUserData($auth.user.id)"
-        />
+        <div class="favoriteshopList-container">
+          <div v-for="shopList in getFavoriteShopLists" v-bind:key="shopList.id">
+            <ShopIndex v-bind:shop-list="shopList" />
+          </div>
+        </div>
         <div class="noFavoriteDisplay-wrapper">
-          <div v-if="shopLists.length === 0" class="noFavoriteDisplay">
+          <div v-if="getFavoriteShopLists.length === 0" class="noFavoriteDisplay">
             <p class="message-first">
               お気に入りに登録された店舗はありません。
             </p>
@@ -28,47 +29,13 @@
           </div>
         </div>
       </div>
-      <div v-else-if="reserveCheck" class="reserve-review-container">
+      <div v-else class="reserve-review-container">
         <div class="reserve-check-container">
           <h3>予約状況</h3>
-          <form>
-            <div>
-              <select v-model="search.shopId">
-                <option value="">店舗名</option>
-                <option
-                  v-for="searchShopList in searchShopLists"
-                  v-bind:key="searchShopList.id"
-                  v-bind:value="searchShopList.id"
-                >
-                  {{ searchShopList.name }}
-                </option>
-              </select>
-              <select v-model="search.reserveDate">
-                <option value="">来店日</option>
-                <option
-                  v-for="reserveList in searchReserveListsForDate"
-                  v-bind:key="reserveList.id"
-                  v-bind:value="reserveList.date"
-                >
-                  {{ reserveList.date }}
-                </option>
-              </select>
-              <select v-model="search.reserveStatus">
-                <option value="">予約状況</option>
-                <option v-for="reserveList in searchReserveListsForStatus"
-                  v-bind:key="reserveList.id"
-                  v-bind:value="reserveList.status"
-                >
-                  {{reserveList.status}}
-                </option>
-              </select>
-            </div>
-            <input
-              type="search"
-              v-model="search.reserveTitle"
-              placeholder="予約名を入力してください"
-            />
-          </form>
+          <SearchReserves
+            v-bind:tab-reserved="tab.reserved"
+            v-bind:tab-not-review="tab.notReview"
+            v-bind:tab-old-reserve="tab.oldReserve" />
         </div>
         <div class="reserve-list-wrapper">
           <ul class="tab-container">
@@ -111,7 +78,7 @@
               class="noFavoriteDisplay"
             >
               <p class="message-first">予約はありません。</p>
-              <p v-if="reserveLists.length === 0" class="message-second">
+              <p v-if="searchAndPaginateReserveLists.length === 0" class="message-second">
                 ホーム画面から店舗詳細ページへ移動し予約登録を行ってください。
               </p>
               <p
@@ -120,7 +87,7 @@
               >
                 検索した条件の予約は見つかりません。
               </p>
-              <NuxtLink　v-if="reserveLists.length === 0" to="/">ホーム画面へ</NuxtLink>
+              <NuxtLink　v-if="searchAndPaginateReserveLists.length === 0" to="/">ホーム画面へ</NuxtLink>
             </div>
           </div>
         </div>
@@ -157,110 +124,42 @@ export default {
     return {
       favoriteShopIndex: true,
       reserveCheck: false,
-      userList: [],
-      favoriteLists: [],
-      shopLists: [],
-      reserveLists: [],
-      newReserveLists: [],
-      allReserveLists:[],
       tab:{
         reserved:true,
-        notreview:false,
-        oldreserve:false,
+        notReview:false,
+        oldReserve:false,
       },
       paginate: {
         pageCount: "",
         currentPage: 1,
         parPage: 10,
       },
-      search: {
-        shopId: "",
-        reserveDate: "",
-        reserveStatus: "",
-        reserveTitle: "",
-      },
     };
   },
   methods: {
-    /*ログイン中のユーザデータ取得*/
-    async getUserData(id) {
-      const userData = await this.$axios.get(
-        "https://resebackend.herokuapp.com/api/user/" + id
-      );
-      this.userList = userData.data.data[0];
-      this.favoriteLists = this.userList.favorite;
-      this.shopLists = this.favoriteLists.map((favoriteList) => {
-        return favoriteList.shop;
-      });
-      this.reserveLists = this.userList.reserve
-        .sort((reserveA, reserveB) => {
-          if (reserveA.date > reserveB.date) {
-            return 1;
-          } else if (reserveA.date === reserveB.date) {
-            return reserveA.time > reserveB.time ? 1 : -1;
-          } else {
-            return -1;
-          }
-        })
-        .filter((reserveList)=>{
-          let today = moment().format("YYYY-MM-DD");
-          if (reserveList.deleted_at!== null) {
-            return reserveList.status = "予約削除済";
-          }
-          if (reserveList.review!==null) {
-            if(reserveList.review.evaluation===null){
-              return reserveList.status = "レビュー未投稿";
-            }
-            else if(reserveList.review.evaluation!==null){
-              return reserveList.status = "レビュー投稿済";
-            }
-          }
-          if (reserveList.date === today) {
-            return reserveList.status = "本日の予約";
-          } else if (reserveList.date > today) {
-            return reserveList.status = "予約中";
-          }
-          else if(reserveList.date < today){
-            return reserveList.status = "予約日超過";
-          }
-        });
-      this.acceptingReservation();
-    },
-    async getAllReserveData(){
-      const allReserveData = await this.$axios.get(
-        "https://resebackend.herokuapp.com/api/reserve"
-      );
-      this.allReserveLists = allReserveData.data.data;
+    searchReset(){
+      this.$store.commit("reserves/setSearchShopId", "");
+      this.$store.commit("reserves/setSearchDate", "");
+      this.$store.commit("reserves/setSearchStatus", "");
+      this.$store.commit("reserves/setSearchTitle", "");
     },
     acceptingReservation(){
       this.tab.reserved=true;
       this.tab.notReview=false;
       this.tab.oldReserve=false;
-      this.newReserveLists = this.reserveLists;
-      this.search.reserveStatus="";
-      this.newReserveLists=this.reserveLists.filter((reserveList)=>{
-        return reserveList.status==="本日の予約"||reserveList.status==="予約中";
-      })
+      this.searchReset();
     },
     acceptingReview(){
       this.tab.reserved=false;
       this.tab.notReview=true;
       this.tab.oldReserve=false;
-      this.newReserveLists = this.reserveLists;
-      this.search.reserveStatus="";
-      this.newReserveLists=this.reserveLists.filter((reserveList)=>{
-        return reserveList.status==="レビュー未投稿";
-      })
+      this.searchReset();
     },
     oldReserve(){
       this.tab.reserved=false;
       this.tab.notReview=false;
       this.tab.oldReserve=true;
-      this.newReserveLists = this.reserveLists;
-      this.search.reserveStatus="";
-      this.newReserveLists=this.reserveLists.filter((reserveList)=>{
-        return reserveList.status==="予約削除済"||reserveList.status==="レビュー投稿済"||reserveList.status==="予約日超過";;
-      });
+      this.searchReset();
     },
     favoriteShopDisplay() {
       if (this.favoriteShopIndex === false) {
@@ -279,137 +178,20 @@ export default {
     },
   },
   computed: {
-    /*検索用の店舗一覧を作成*/
-    searchShopLists() {
-      const searchShopLists = this.newReserveLists
-        .filter((reserveList, index) => {
-          return (
-            this.newReserveLists
-              .map((reserveList) => {
-                return reserveList.shop_id;
-              })
-              .indexOf(reserveList.shop_id) === index
-          );
-        })
-        .map((reserveList) => {
-          return reserveList.shop;
-        });
-      return searchShopLists;
-    },
-    /*検索用の予約日一覧を作成*/
-    searchReserveListsForDate() {
-      const searchReserveLists = this.newReserveLists.filter(
-        (reserveList, index) => {
-          return (
-            this.newReserveLists
-              .map((reserveList) => {
-                return reserveList.date;
-              })
-              .indexOf(reserveList.date) === index
-          );
-        }
-      );
-      return searchReserveLists;
-    },
-    /*検索用のステータス一覧を作成*/
-    searchReserveListsForStatus() {
-      const searchReserveLists = this.newReserveLists.filter(
-        (reserveList, index) => {
-          return (
-            this.newReserveLists
-              .map((reserveList) => {
-                return reserveList.status;
-              })
-              .indexOf(reserveList.status) === index
-          );
-        }
-      );
-      return searchReserveLists;
+    getFavoriteShopLists(){
+      return this.$store.getters["shops/getFavariteShopLists"](this.$auth.user.id)
     },
     /*検索とページネーションに対応した配列*/
     searchAndPaginateReserveLists() {
-      let searchAndPaginateReserveLists = this.newReserveLists;
-      if (this.search.shopId) {
-        searchAndPaginateReserveLists = searchAndPaginateReserveLists.filter(
-          (searchAndPaginateReserveList) => {
-            return searchAndPaginateReserveList.shop.id === this.search.shopId;
-          }
-        );
+    let searchAndPaginateReserveLists
+      if(this.tab.reserved==true){
+        searchAndPaginateReserveLists = this.$store.getters["reserves/getSearchReserveLists"](this.$store.getters["reserves/getActUserReserveLists"]());
       }
-      if (this.search.reserveDate) {
-        searchAndPaginateReserveLists = searchAndPaginateReserveLists.filter(
-          (searchAndPaginateReserveList) => {
-            return (
-              searchAndPaginateReserveList.date === this.search.reserveDate
-            );
-          }
-        );
+      else if(this.tab.notReview==true){
+        searchAndPaginateReserveLists = this.$store.getters["reserves/getSearchReserveLists"](this.$store.getters["reserves/getDeactUserReserveLists"]());
       }
-      if (this.search.reserveStatus) {
-        switch (this.search.reserveStatus) {
-          case "予約削除済":
-            searchAndPaginateReserveLists =
-              searchAndPaginateReserveLists.filter(
-                (searchAndPaginateReserveList) => {
-                  return searchAndPaginateReserveList.status==="予約削除済";
-                }
-              );
-            break;
-          case "レビュー未投稿":
-            searchAndPaginateReserveLists =
-              searchAndPaginateReserveLists.filter(
-                (searchAndPaginateReserveList) => {
-                  return searchAndPaginateReserveList.status==="レビュー未投稿";
-                }
-              );
-            break;
-          case "レビュー投稿済":
-            searchAndPaginateReserveLists =
-              searchAndPaginateReserveLists.filter(
-                (searchAndPaginateReserveList) => {
-                  return searchAndPaginateReserveList.status==="レビュー投稿済";
-                }
-              );
-            break;
-          case "本日の予約":
-            searchAndPaginateReserveLists =
-              searchAndPaginateReserveLists.filter(
-                (searchAndPaginateReserveList) => {
-                  return searchAndPaginateReserveList.status==="本日の予約";
-                }
-              );
-            break;
-          case "予約中":
-            searchAndPaginateReserveLists =
-              searchAndPaginateReserveLists.filter(
-                (searchAndPaginateReserveList) => {
-                  return searchAndPaginateReserveList.status==="予約中";
-                }
-              );
-            break;
-          case "予約日超過":
-            searchAndPaginateReserveLists =
-              searchAndPaginateReserveLists.filter(
-                (searchAndPaginateReserveList) => {
-                  return (
-                    searchAndPaginateReserveList.date <
-                      moment().format("YYYY-MM-DD") &&
-                    searchAndPaginateReserveList.review === null &&
-                    searchAndPaginateReserveList.deleted_at === null
-                  );
-                }
-              );
-            break;
-        }
-      }
-      if (this.search.reserveTitle) {
-        searchAndPaginateReserveLists = searchAndPaginateReserveLists.filter(
-          (searchReserveList) => {
-            return searchAndPaginateReserveList.name.includes(
-              this.search.reserveTitle
-            );
-          }
-        );
+      else if(this.tab.oldReserve==true){
+        searchAndPaginateReserveLists = this.$store.getters["reserves/getSearchReserveLists"](this.$store.getters["reserves/getOldUserReserveLists"]());
       }
       this.paginate.pageCount = searchAndPaginateReserveLists.length;
       let end = this.paginate.currentPage * this.paginate.parPage;
@@ -420,7 +202,7 @@ export default {
     sumReserveNumber(){
       return function(reserveShopId,reserveDate,reserveTime){
         let sumReserveNumber=0;
-        this.allReserveLists.filter((reserveList)=>{
+        this.$store.state.reserves.allReserveLists.filter((reserveList)=>{
           return reserveList.shop_id===reserveShopId;
         })
         .filter((reserveList)=>{
@@ -453,9 +235,10 @@ export default {
       deep:true,
     }
   },
-  created() {
-    this.getUserData(this.$auth.user.id);
-    this.getAllReserveData();
+  async created() {
+    await this.$store.dispatch("reserves/getReservesData");
+    this.$store.commit("reserves/setUserReserveLists",this.$auth.user.id);
+    this.acceptingReservation();
   },
 };
 </script>
@@ -502,6 +285,10 @@ input {
   display: flex;
   width: auto;
   margin: 0 0 0 220px;
+}
+.favoriteshopList-container{
+  display: flex;
+  flex-wrap:wrap;
 }
 .reserve-list-wrapper{
   width:70vw;

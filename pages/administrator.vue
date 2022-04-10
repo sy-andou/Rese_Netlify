@@ -14,10 +14,7 @@
       <div v-if="display.userIndex" class="user-lists-wrapper">
         <h3>ユーザー一覧</h3>
         <div>
-          <UserIndexTable
-            v-bind:user-lists="userLists"
-            v-on:reload="getUserData"
-          />
+          <UserIndexTable v-on:reload="getUserData" />
         </div>
       </div>
       <div v-else-if="display.representativeRegister">
@@ -29,7 +26,7 @@
       <div v-else-if="display.sendEmail">
         <h3>メール送信フォーム</h3>
         <div>
-          <MailForm v-bind:user-lists="userLists" class="mail-form" />
+          <MailForm class="mail-form" />
         </div>
       </div>
     </div>
@@ -40,7 +37,6 @@ export default {
   middleware: "administrator",
   data() {
     return {
-      userLists: [],
       display: {
         userIndex: true,
         representativeRegister: false,
@@ -49,18 +45,6 @@ export default {
     };
   },
   methods: {
-    async getUserData() {
-      const userData = await this.$axios.get(
-        "https://resebackend.herokuapp.com/api/user"
-      );
-      this.userLists = userData.data.data.sort((userA, userB) => {
-        if (userA.permission_id < userB.permission_id) {
-          return 1;
-        } else {
-          return -1;
-        }
-      });
-    },
     alertComplete() {
       alert("店舗代表者の登録が完了しました。");
     },
@@ -87,7 +71,7 @@ export default {
     },
   },
   created() {
-    this.getUserData();
+    this.$store.dispatch("users/getUsersData");
   },
 };
 </script>

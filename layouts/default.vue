@@ -30,6 +30,9 @@ export default {
   },
   created() {
     this.setListner();
+    this.$nuxt.$emit("setLoading");
+    this.$store.dispatch("shops/getShopsData");
+    this.$nuxt.$emit("setLoading");
   },
 };
 </script>

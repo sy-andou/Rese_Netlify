@@ -115,14 +115,13 @@
                 name="エリア名"
                 >
                 <option
-                  v-for="areaList in areaLists"
+                  v-for="areaList in $store.state.areas.areaLists"
                   v-bind:key="areaList.id"
                   v-bind:value="areaList.id"
                   >
                 {{ areaList.area }}
                 </option>
               </select>
-            </select>
               <span v-bind:class="{ customLabel: shopList.area_id }" class="area-label">Area</span>
               <span class="border"></span>
             </label>
@@ -142,14 +141,14 @@
                 name="ジャンル名"
               >
                 <option
-                  v-for="genreList in genreLists"
+                  v-for="genreList in $store.state.genres.genreLists"
                   v-bind:key="genreList.id"
                   v-bind:value="genreList.id"
                 >
                 {{ genreList.genre }}
                 </option>
               </select>
-            <span v-bind:class="{ customLabel: shopList.genre_id }" class="genre-label">Genre</span>
+              <span v-bind:class="{ customLabel: shopList.genre_id }" class="genre-label">Genre</span>
               <span class="border"></span>
             </label>
             <p class="error">{{ ProviderProps.errors[0] }}</p>
@@ -260,7 +259,7 @@
 </template>
 <script>
 export default {
-  props: ["shopList","areaLists","genreLists"],
+  props: ["shopList"],
   data() {
     return {
       selected_file: null,
@@ -347,10 +346,10 @@ export default {
             this.$nuxt.$emit("setLoading");
             await this.$axios.put("https://resebackend.herokuapp.com/api/shop/" +id, sendData)
               .then((response)=>{
-                this.$nuxt.$emit("setLoading");
                 let formData = new FormData();
                 formData.append("file", this.selected_file);
-                this.$axios.post("https://resebackend.herokuapp.com/api/storage", formData);
+                this.$axios.post("https://resebackend.herokuapp.com/api/storage/", formData);
+                this.$nuxt.$emit("setLoading");
                 alert(response.data.message);
               });
           }
@@ -361,7 +360,7 @@ export default {
         }
       }
       catch(response) {
-          this.$nuxt.$emit("setLoading");
+        this.$nuxt.$emit("setLoading");
           var status = response.response.status;
           if (status == 400) {
             var errors = response.response.data.errors;
@@ -384,15 +383,15 @@ export default {
     },
     async deleteShop(id) {
       if (window.confirm("店舗情報を削除いたしますか？")) {
-        this.$nuxt.$emit("setLoading");
+      this.$nuxt.$emit("setLoading");
         await this.$axios.delete("https://resebackend.herokuapp.com/api/shop/" + this.shopList.id);
-        this.$nuxt.$emit("setLoading");
         alert("店舗情報を削除しました。");
         this.$emit("reload");
       }
       else{
         alert("削除は実行されませんでした。");
       }
+      this.$nuxt.$emit("setLoading");
     },
     resize(){
       this.textareaHeight = "auto";
@@ -401,16 +400,20 @@ export default {
       })
     },
     findArea(){
-      const areaList = this.areaLists.find((areaList)=>{
-        return areaList.id===this.area_id;
-      });
-      this.area = areaList.area;
+      if(this.area_id){
+        const areaList = this.$store.state.areas.areaLists.find((areaList)=>{
+          return areaList.id===this.area_id;
+        });
+        return areaList.area;
+      }
     },
     findGenre(){
-      const genreList = this.genreLists.find((genreList)=>{
-        return genreList.id===this.genre_id;
-      });
-      this.genre = genreList.genre;
+      if(this.genre_id){
+        const genreList = this.$store.state.genres.genreLists.find((genreList)=>{
+          return genreList.id===this.genre_id;
+        });
+        return genreList.genre;
+      }
     },
     imgBorderStylefocus(){
       this.imgBorderStyle=false;
@@ -451,8 +454,6 @@ export default {
       return this.max_number;
     },
   },
-  created() {
-  },
   watch:{
     summary(){
       this.resize();
@@ -463,6 +464,8 @@ export default {
     genre_id(){
       this.findGenre();
     },
+  },
+  created() {
   },
   mounted(){
     this.resize();

@@ -82,7 +82,7 @@
                 v-on:change="previewData"
               >
                 <option
-                  v-for="areaList in areaLists"
+                  v-for="areaList in $store.state.areas.areaLists"
                   v-bind:key="areaList.id"
                   v-bind:value="areaList.id"
                 >
@@ -109,7 +109,7 @@
                 v-on:change="previewData"
               >
                 <option
-                  v-for="genreList in genreLists"
+                  v-for="genreList in $store.state.genres.genreLists"
                   v-bind:key="genreList.id"
                   v-bind:value="genreList.id"
                 >
@@ -210,7 +210,6 @@
 </template>
 <script>
 export default {
-  props:["areaLists","genreLists"],
   data() {
     return {
       name: "",
@@ -251,7 +250,7 @@ export default {
       if(event.target.files[0]){
         this.selected_file = event.target.files[0];
         this.file_name = event.target.files[0].name;
-        this.img_pass="https://reseimgbucket.s3.ap-northeast-3.amazonaws.com/" +this.file_name;
+        this.img_pass="https://reseimgbucket.s3.ap-northeast-3.amazonaws.com/"+this.file_name;
         this.imgUrl = URL.createObjectURL(this.$refs.preview.files[0]);
       }
     },
@@ -287,12 +286,12 @@ export default {
             genre_id: this.genre_id,
           };
           this.$nuxt.$emit("setLoading");
-          await this.$axios.post("https://resebackend.herokuapp.com/api/shop", sendData)
+          await this.$axios.post("https://resebackend.herokuapp.com/api/shop/", sendData)
           .then((response) => {
-            this.$nuxt.$emit("setLoading");
             let formData = new FormData();
             formData.append("file", this.selected_file);
-            this.$axios.post("https://resebackend.herokuapp.com/api/storage", formData);
+            this.$axios.post("https://resebackend.herokuapp.com/api/storage/", formData);
+            this.$nuxt.$emit("setLoading");
             alert(response.data.message);
             this.$emit("reload");
           })
@@ -300,7 +299,7 @@ export default {
           alert("店舗情報を作成しました。");
         }
       } catch (response) {
-          this.$nuxt.$emit("setLoading");
+      this.$nuxt.$emit("setLoading");
           var status = response.response.status;
           if (status == 400) {
             var errors = response.response.data.errors;
@@ -336,7 +335,7 @@ export default {
   computed:{
     findArea(){
       if(this.area_id){
-        const areaList = this.areaLists.find((areaList)=>{
+        const areaList = this.$store.state.areas.areaLists.find((areaList)=>{
           return areaList.id===this.area_id;
         });
         return areaList.area;
@@ -344,7 +343,7 @@ export default {
     },
     findGenre(){
       if(this.genre_id){
-        const genreList = this.genreLists.find((genreList)=>{
+        const genreList = this.$store.state.genres.genreLists.find((genreList)=>{
           return genreList.id===this.genre_id;
         });
         return genreList.genre;

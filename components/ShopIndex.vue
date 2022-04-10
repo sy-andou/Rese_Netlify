@@ -1,67 +1,48 @@
 <template>
   <div>
-    <form v-if="$route.path === '/'">
-      <select v-model="searchArea">
-        <option value="">全都道府県</option>
-        <option　v-for="areaList in createAreaLists" v-bind:value="areaList.id">{{areaList.area}}</option>
-      </select>
-      <select v-model="searchGenre">
-        <option value="">全ジャンル</option>
-        <option　v-for="genreList in createGenreLists" v-bind:value="genreList.id">{{genreList.genre}}</option>
-      </select>
-      <input v-model="searchShopName" type="search" placeholder="search..." />
-    </form>
-    <div class="shop-wrapper">
-      <div
-        v-for="shopList in filterShopLists"
-        v-bind:key="shopList.id"
-        class="shop-container"
-      >
-        <img
-          v-bind:src="shopList.img_pass"
-          v-on:click="showShopSummary(shopList.id)"
-          class="shop-img"
-        />
-        <div class="shop-infomation">
-          <div>
-            <h3 v-on:click="showShopSummary(shopList.id)" class="shop-name">
-              {{ shopList.name }}
-            </h3>
-            <div class="shop-tag">
-              <p v-on:click="getSearchArea(shopList.area_id)">
-                #{{ shopList.area.area }}
-              </p>
-              <p v-on:click="getSearchGenre(shopList.genre_id)">
-                #{{ shopList.genre.genre }}
-              </p>
-            </div>
-            <p v-on:click="showShopSummary(shopList.id)" class="shop-link">
-              詳しく見る
-            </p>
+    <div
+      class="shop-container"
+    >
+      <img
+        v-bind:src="shopList.img_pass"
+        v-on:click="pushShopDetail(shopList.id)"
+        class="shop-img"
+      />
+      <div class="shop-infomation">
+        <div>
+          <h3 v-on:click="pushShopDetail(shopList.id)" class="shop-name">
+            {{ shopList.name }}
+          </h3>
+          <div class="shop-tag">
+            <p v-on:click="selectAreaId(shopList.area_id)">#{{ shopList.area.area }}</p>
+            <p v-on:click="selectGenreId(shopList.genre_id)">#{{ shopList.genre.genre }}</p>
           </div>
-          <div class="shop-infomation-right">
-            <div　class="evaluation-container">
-              <p class="evaluation-star">
-                <span
-                  class="star5_rating"
-                  v-bind:data-rate='evaluationAvg(shopList.id)'>
-                </span>
-              </p>
-              <p>{{evaluationAvg(shopList.id)}}</p>
-            </div>
-            <div class="favorite-container">
-              <div v-if="$auth.loggedIn">
-                <img
-                  v-if="findFavoriteShop(shopList.id)"
-                  v-on:click="deleteFavorite(shopList.id)"
-                  src="/img/heartPink.png"
-                />
-                <img
-                  v-else
-                  v-on:click="insertFavorite(shopList.id)"
-                  src="/img/heartGray.png"
-                />
-              </div>
+          <p v-on:click="pushShopDetail(shopList.id)" class="shop-link">
+            詳しく見る
+          </p>
+        </div>
+        <div class="shop-infomation-right">
+          <div　class="evaluation-container">
+            <p class="evaluation-star">
+              <span
+                class="star5_rating"
+                v-bind:data-rate='shopList.evaluationAvg'>
+              </span>
+            </p>
+            <p>{{shopList.evaluationAvg}}</p>
+          </div>
+          <div class="favorite-container">
+            <div v-if="$auth.loggedIn">
+              <img
+                v-if="favoriteCheck"
+                v-on:click="deleteFavorite(shopList.id)"
+                src="/img/heartPink.png"
+              />
+              <img
+                v-else
+                v-on:click="insertFavorite(shopList.id)"
+                src="/img/heartGray.png"
+              />
             </div>
           </div>
         </div>
@@ -72,46 +53,20 @@
 
 <script>
 export default {
-  props: ["shopLists"],
+  props:["shopList"],
   data() {
     return {
-      searchArea:'',
-      searchGenre:'',
-      searchShopName:'',
     };
   },
   methods: {
-  /*店舗詳細へのリンク*/
-    showShopSummary(id) {
+    pushShopDetail(id) {
       this.$router.push({ name: "detail-shopId", params: { shopId: id } });
     },
-    /*エリアで検索*/
-    getSearchArea(id) {
-      if (this.$route.path !== "/") {
-        this.$router.push({ name: "index", params: { areaId: id }  });
-      }
-      else{
-        this.searchArea = id;
-        this.searchGenre = "";
-      }
+    selectAreaId(areaId){
+      this.$store.commit("areas/setSelectAreaId", areaId);
     },
-    /*ジャンルで検索*/
-    getSearchGenre(id) {
-      if (this.$route.path !== "/") {
-        this.$router.push({ name: "index", params: { genreId: id } });
-      } else {
-        this.searchArea = "";
-        this.searchGenre = id;
-      }
-    },
-    /*ページ遷移時に検索を実行する関数*/
-    getSearchParams(){
-      if(this.$route.params.areaId){
-        this.searchArea = this.$route.params.areaId;
-      }
-      if(this.$route.params.genreId){
-        this.searchGenre = this.$route.params.genreId;
-      }
+    selectGenreId(genreId){
+      this.$store.commit("genres/setSelectGenreId", genreId);
     },
     /*お気に入りに追加*/
     async insertFavorite(shopId) {
@@ -119,14 +74,13 @@ export default {
         user_id: this.$auth.user.id,
         shop_id: shopId,
       };
-      await this.$axios.post("https://resebackend.herokuapp.com/api/favorite", sendData);
+      await this.$axios.post("hhttps://resebackend.herokuapp.com/api/favorite/", sendData);
       alert('お気に入りに追加しました。');
-      this.$emit("reload");
+      this.$store.dispatch("shops/getShopsData");
     },
-
     /*お気に入りを削除*/
     async deleteFavorite(shopId) {
-      const shop = this.shopLists.find((shop) => {
+      const shop = this.$store.state.shops.shopLists.find((shop) => {
         return shop.id === shopId;
       });
       const favorite = shop.favorite.find((favorite) => {
@@ -137,93 +91,15 @@ export default {
         "https://resebackend.herokuapp.com/api/favorite/" + favoriteId
       );
       alert('お気に入りから削除しました。');
-      this.$emit("reload");
-    },
-    /*お気に入りであるか判定*/
-    findFavoriteShop(shopId) {
-      const findShopList = this.shopLists.find((shopList) => {
-        return shopList.id === shopId;
-      });
-      const findFavorite = findShopList.favorite.find((favorite) => {
-        return favorite.user_id === this.$auth.user.id;
-      });
-      if (Boolean(findFavorite)) {
-        return true;
-      } else {
-        return false;
-      }
-    },
-    /*５段階評価の平均を計算*/
-    evaluationAvg(id){
-      const evaluationArry = this.shopLists.find((shopList)=>{
-        return shopList.id===id;
-      })
-      .reserve.filter((reserveList)=>{
-        return reserveList.review!==null;
-      })
-      .map((reserveList)=>{
-          return reserveList.review.evaluation;
-      });
-      if(evaluationArry.length!==0){
-        let sumevaluation=0;
-        evaluationArry.forEach((evaluation)=>{
-          return  sumevaluation = sumevaluation + evaluation;
-        });
-        return Math.round(sumevaluation/evaluationArry.length*10)/10;
-      }
-      else{
-        return 0;
-      }
+      this.$store.dispatch("shops/getShopsData");
     },
   },
   computed:{
-    /*店舗一覧を加工しエリア一覧を作成*/
-    createAreaLists(){
-      const areaLists = this.shopLists.filter((shopList,index)=>{
-        return this.shopLists.map((shopList)=>{
-          return shopList.area_id;
-        })
-        .indexOf(shopList.area_id)===index;})
-        .map((shopList)=>{
-          return shopList.area;
-        });
-      return areaLists;
-    },
-    /*店舗一覧を加工しジャンル一覧を作成*/
-    createGenreLists(){
-      const genreLists = this.shopLists.filter((shopList,index)=>{
-        return this.shopLists.map((shopList)=>{
-          return shopList.genre_id;
-        })
-        .indexOf(shopList.genre_id)===index;})
-        .map((shopList)=>{
-          return shopList.genre;
-        });
-      return genreLists;
-    },
-    /*検索内容を元に店舗一覧を表示*/
-    filterShopLists() {
-      let filterShopLists = this.shopLists;
-      if (this.searchArea) {
-        filterShopLists = filterShopLists.filter((filterShopList) => {
-          return filterShopList.area_id === this.searchArea;
-        });
-      }
-      if (this.searchGenre) {
-        filterShopLists = filterShopLists.filter((filterShopList) => {
-          return filterShopList.genre_id === this.searchGenre;
-        });
-      }
-      if (this.searchShopName) {
-        filterShopLists = filterShopLists.filter((filterShopList) => {
-          return filterShopList.name.includes(this.searchShopName);
-        });
-      }
-      return filterShopLists;
+    favoriteCheck() {
+      return this.$store.getters["shops/checkFavorite"](this.shopList.id,this.$auth.user.id)
     },
   },
   created() {
-  　　this.getSearchParams();
   },
 };
 </script>
@@ -305,30 +181,8 @@ export default {
 </style>
 
 <style scoped>
-form{
-  display:flex;
-  justify-content:flex-end;
-  margin:20px 50px;
-}
-select,input{
-  height:40px;
-  border:none;
-  box-shadow: 2px 2px 4px gray;
-}
-select{
-  width:100px;
-}
-select:first-child{
-  border-radius:5px 0 0 5px;
-}
-input{
-  width:400px;
-  border-radius:0 5px 5px 0;
-}
+
 .shop-wrapper {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: flex-start;
 }
 .shop-container {
   width: 320px;
@@ -396,16 +250,14 @@ input{
   form > select,
   form > input {
     width:100%;
-    border-radius:0;
+    border-radius:5px;
     over-flow:hidden;
   }
-  .shop-wrapper {
-    display: block;
+  select:first-child {
+    border-radius:5px ;
   }
   .shop-container{
-    width:100%;
     margin:0 0 15px 0;
-    border-radius:0;
   }
 }
 </style>

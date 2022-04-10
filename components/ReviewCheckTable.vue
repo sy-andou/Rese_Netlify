@@ -4,47 +4,43 @@
       <tr class="th-container">
         <th>
           <select
-            v-model="search.shopName"
+            v-on:change="searchShopId($event)"
+            v-bind:value="$store.state.reserves.search.shopId"
             class="shop-name"
           >
             <option value="">店舗名</option>
             <option
-              v-for="reviewList in searchForshopNameReviewLists"
-              v-bind:key="reviewList.id"
-              v-bind:value="reviewList.shop_id"
-            >{{reviewList.shop.name}}
+              v-for="searchShopList in searchShopLists"
+              v-bind:key="searchShopList.id"
+              v-bind:value="searchShopList.id"
+            >{{ searchShopList.name }}
             </option>
           </select>
         </th>
         <th class="th-email">
-          <select
-            v-model="search.userName"
-            class="user-name"
-          >
-            <option value="">ユーザー名</option>
-            <option
-              v-for="reviewList in searchForuserNameReviewLists"
-              v-bind:key="reviewList.review.id"
-              v-bind:value="reviewList.user_id"
-            >{{reviewList.user.name}}
-            </option>
-          </select>
+          <input
+            v-on:change.prevent="searchName"
+            v-bind:value="$store.state.reserves.search.name"
+            type="search"
+            placeholder="投稿者名"
+          />
         </th>
         <th class="input-date-container">
           <label v-show="dateState === 'collapse'">来店日</label>
           <input
-            v-model="search.date"
+            v-on:change.prevent="searchDate"
+            v-bind:value="$store.state.reserves.search.date"
             v-bind:style="inputCssVars"
-            v-on:focus="displayDate(search.date)"
-            v-on:blur="displayDate(search.date)"
+            v-on:focus="displayDate($store.state.reserves.search.date)"
+            v-on:blur="displayDate($store.state.reserves.search.date)"
             type="date"
             placeholder="来店日"
           />
         </th>
         <th>
           <select
-            v-model="search.evaluation"
-            class="evaluation"
+            v-on:change="searchEvaluation($event)"
+            v-bind:value="$store.state.reserves.search.review.evaluation"
           >
             <option value="">評価</option>
             <option　v-bind:value="5">★5</option>
@@ -93,24 +89,29 @@
 </template>
 <script>
 export default {
-  props: ["reviewLists"],
   data() {
     return {
       dateState: "collapse",
-      pageCount: this.reviewLists.length,
+      pageCount: this.$store.getters["reserves/getReviewLists"]().length,
       paginate: {
         currentPage: 1,
         parPage: 10,
       },
-      search: {
-        shopName: "",
-        userName: "",
-        date:"",
-        evaluation:"",
-      },
     };
   },
   methods: {
+    searchShopId(event) {
+      this.$store.commit("reserves/setSearchShopId", event.target.value);
+    },
+    searchName(event) {
+      this.$store.commit("reserves/setSearchName", event.target.value);
+    },
+    searchDate(event) {
+      this.$store.commit("reserves/setSearchDate", event.target.value);
+    },
+    searchEvaluation(event){
+      this.$store.commit("reserves/setSearchEvaluation", event.target.value);
+    },
     clickCallback(pageNum) {
       this.paginate.currentPage = Number(pageNum);
     },
@@ -123,62 +124,25 @@ export default {
     },
   },
   computed: {
-    /*検索用の店舗名一覧を作成*/
-    searchForshopNameReviewLists() {
-      const searchReviewLists = this.reviewLists.filter(
-        (reviewList, index) => {
+    searchShopLists() {
+      return this.$store.getters["reserves/getReviewLists"]()
+        .filter((reserveList, index) => {
           return (
-            this.reviewLists
-              .map((reviewList) => {
-                return reviewList.shop.name;
+            this.$store.getters["reserves/getReviewLists"]()
+              .map((reserveList) => {
+                return reserveList.shop_id;
               })
-              .indexOf(reviewList.shop.name) === index
+              .indexOf(reserveList.shop_id) === index
           );
-        }
-      );
-      return searchReviewLists;
-    },
-    /*検索用のユーザー名一覧を作成*/
-    searchForuserNameReviewLists() {
-      const searchReviewLists = this.reviewLists.filter((reviewList, index) => {
-        return (
-          this.reviewLists
-            .map((reviewList) => {
-              return reviewList.user.name;
-            })
-            .indexOf(reviewList.user.name) === index
-        );
-      });
-      return searchReviewLists;
+        })
+        .map((reserveList) => {
+          return reserveList.shop;
+        });
     },
     /*検索内容から検索結果を表示*/
     searchAndPaginateReviewLists() {
-      let searchAndPaginateReviewLists = this.reviewLists;
-      if (this.search.shopName) {
-        searchAndPaginateReviewLists = searchAndPaginateReviewLists.filter(
-          (searchAndPaginateReviewList) => {
-            return searchAndPaginateReviewList.shop_id===this.search.shopName;
-          });
-      }
-      if (this.search.userName) {
-        searchAndPaginateReviewLists = searchAndPaginateReviewLists.filter(
-          (searchAndPaginateReviewList) => {
-            return searchAndPaginateReviewList.user_id===this.search.userName;
-          });
-      }
-      if (this.search.date) {
-        searchAndPaginateReviewLists = searchAndPaginateReviewLists.filter(
-          (searchAndPaginateReviewList) => {
-            return searchAndPaginateReviewList.date===this.search.date;
-          });
-      }
-      if (this.search.evaluation) {
-        searchAndPaginateReviewLists = searchAndPaginateReviewLists.filter(
-          (searchAndPaginateReviewList) => {
-            return searchAndPaginateReviewList.review.evaluation===this.search.evaluation;
-          });
-      }
-      this.pageCount = this.reviewLists.length;
+      let searchAndPaginateReviewLists = this.$store.getters["reserves/getSearchReserveLists"](this.$store.getters["reserves/getReviewLists"]());
+      this.pageCount = this.$store.getters["reserves/getReviewLists"]().length;
       this.pageCount = searchAndPaginateReviewLists.length;
       let end = this.paginate.currentPage * this.paginate.parPage;
       let start = end - this.paginate.parPage;
@@ -270,6 +234,7 @@ td {
   text-align: left;
 }
 .user-index-wrapper {
+
   height: 100%;
   padding:0 20px 20px 20px;
   background-color: white;
@@ -305,11 +270,8 @@ td {
   }
   .th-container{
     display:grid;
-    grid-template-columns:50% 45%;
+    grid-template-columns:50% 50%;
     padding:0;
-  }
-  input,select {
-    
   }
   .th-email{
     display:none;

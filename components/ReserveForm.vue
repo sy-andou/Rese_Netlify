@@ -79,16 +79,20 @@
           class="reserve-input-container"
         >
           <div
-            v-if="date && time && shopList.max_number !== sumReserveNumber"
+            v-if="
+              date &&
+              time &&
+              $store.state.shops.shopList.max_number !== sumReserveNumber
+            "
             class="number-input-wrapper"
           >
             <label class="inp">
               <select v-model="number" name="人数">
                 <option
                   v-for="n in calReserveNumber"
-                  v-bind:value="n - 1 + shopList.min_number"
+                  v-bind:value="n - 1 + $store.state.shops.shopList.min_number"
                 >
-                  {{ n - 1 + shopList.min_number }}人
+                  {{ n - 1 + $store.state.shops.shopList.min_number }}人
                 </option>
               </select>
               <span v-bind:class="{ customLabel: number }" class="number-label"
@@ -100,7 +104,11 @@
             <p v-show="errors.date" class="error">*{{ errors.number }}</p>
           </div>
           <div
-            v-else-if="date && time && shopList.max_number === sumReserveNumber"
+            v-else-if="
+              date &&
+              time &&
+              $store.state.shops.shopList.max_number === sumReserveNumber
+            "
             class="number-input-wrapper"
           >
             <span class="cannot-select" style="color: red"
@@ -129,7 +137,7 @@
           </div>
           <div class="input-check">
             <p class="reserve-item">Shop</p>
-            <p class="reserve-data">{{ shopList.name }}</p>
+            <p class="reserve-data">{{ $store.state.shops.shopList.name }}</p>
           </div>
           <div class="input-check">
             <p class="reserve-item">Date</p>
@@ -166,7 +174,6 @@
 </template>
 <script>
 export default {
-  props: ["shopList"],
   data() {
     return {
       dateState: "collapse",
@@ -197,11 +204,9 @@ export default {
               time: this.time,
               number: this.number,
             };
-            this.$nuxt.$emit("setLoading");
             let reserveCreateData = await this.$axios
-              .post("https://resebackend.herokuapp.com/api/reserve", sendData)
+              .post("https://resebackend.herokuapp.com/api/reserve/", sendData)
               .then((response) => {
-                this.$nuxt.$emit("setLoading");
                 alert(response.data.message);
                 this.$router.push("/done");
               });
@@ -209,7 +214,6 @@ export default {
             alert("予約は実施されませんでした。");
           }
         } catch (response) {
-          this.$nuxt.$emit("setLoading");
           var status = response.response.status;
           if (status == 400) {
             var errors = response.response.data.errors;
@@ -251,7 +255,7 @@ export default {
             "【" +
             this.$auth.user.name +
             "様】" +
-            this.shopList.name +
+            this.$store.state.shops.shopList.name +
             "へのご来店"
           );
         }
@@ -259,7 +263,7 @@ export default {
     },
     sumReserveNumber() {
       let sumReserveNumber = 0;
-      this.shopList.reserve
+      this.$store.state.shops.shopList.reserve
         .filter((reserveList) => {
           return reserveList.date === this.date;
         })
@@ -273,7 +277,7 @@ export default {
     },
     calReserveNumber() {
       let sumReserveNumber = 0;
-      this.shopList.reserve
+      this.$store.state.shops.shopList.reserve
         .filter((reserveList) => {
           return reserveList.date === this.date;
         })
@@ -284,22 +288,30 @@ export default {
           return (sumReserveNumber += reserveList.number);
         });
       return (
-        this.shopList.max_number -
-        this.shopList.min_number +
+        this.$store.state.shops.shopList.max_number -
+        this.$store.state.shops.shopList.min_number +
         1 -
         sumReserveNumber
       );
     },
     calReserveTime() {
-      let arrayTime = [];
-      for (
-        let i = Number(this.shopList.opening_time.split(":")[0]);
-        i <= Number(this.shopList.closing_time.split(":")[0]);
-        i++
+      if (
+        this.$store.state.shops.shopList.opening_time &&
+        this.$store.state.shops.shopList.closing_time
       ) {
-        arrayTime.push(i.toString() + ":00");
+        let arrayTime = [];
+        for (
+          let i = Number(
+            this.$store.state.shops.shopList.opening_time.split(":")[0]
+          );
+          i <=
+          Number(this.$store.state.shops.shopList.closing_time.split(":")[0]);
+          i++
+        ) {
+          arrayTime.push(i.toString() + ":00");
+        }
+        return arrayTime;
       }
-      return arrayTime;
     },
   },
   mounted() {},

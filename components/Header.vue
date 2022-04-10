@@ -14,7 +14,10 @@
             <img src="/img/restaurantCross.png" class="logo-img" />
           </div>
         </div>
-        <h1 v-on:click="menu = true">Rese</h1>
+        <div class="title-container">
+          <h1 v-on:click="menu = true">RRS</h1>
+          <span>-Restaurant Reserve Sysytem-</span>
+        </div>
       </div>
       <div class="login-state-container">
         <div v-if="$auth.loggedIn" class="login-user-container">
@@ -136,16 +139,22 @@ a {
   height: auto;
   padding: 20px 0;
 }
-h1 {
+.menu-container {
+  display: flex;
+  align-items: center;
+}
+.title-container {
   margin: auto 30px;
+}
+h1 {
   font-size: 50px;
   font-family: Courier;
   color: rgb(0, 108, 255);
   cursor: pointer;
 }
-.menu-container {
-  display: flex;
-  align-items: center;
+.title-container > span {
+  font-family: Courier;
+  color: rgb(0, 108, 255);
 }
 .login-state-container {
   margin: auto 0;

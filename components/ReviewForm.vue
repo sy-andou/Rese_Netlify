@@ -104,15 +104,12 @@ export default {
             evaluation: evaluation,
             comment: comment,
           };
-          this.$nuxt.$emit("setLoading");
           await this.$axios
             .put(
-              "https://resebackend.herokuapp.com/api/review/" +
-                this.reviewList.id,
+              "https://resebackend.herokuapp.com/api/review/" + this.reviewList.id,
               sendData
             )
             .then((response) => {
-              this.$nuxt.$emit("setLoading");
               alert(response.data.message);
               this.$emit("reload");
             });
@@ -120,7 +117,6 @@ export default {
           alert("レビューは投稿されませんでした。");
         }
       } catch (response) {
-        this.$nuxt.$emit("setLoading");
         var status = response.response.status;
         if (status == 400) {
           var errors = response.response.data.errors;

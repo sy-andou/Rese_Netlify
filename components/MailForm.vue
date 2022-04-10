@@ -12,7 +12,7 @@
             <label class="inp">
               <select id="address" v-model="address" multiple>
                 <option
-                  v-for="userList in userLists"
+                  v-for="userList in $store.state.users.userLists"
                   v-bind:key="userList.id"
                   v-bind:value="userList.email"
                 >
@@ -88,7 +88,6 @@
 </template>
 <script>
 export default {
-  props: ["userLists"],
   data() {
     return {
       address: [],
@@ -97,22 +96,22 @@ export default {
     };
   },
   methods: {
-    async sendMail() {
+    sendMail() {
+      this.$nuxt.$emit("setLoading");
       const sendData = {
         address: this.address,
         subject: this.subject,
         text: this.text,
       };
-      this.$nuxt.$emit("setLoading");
-      await this.$axios
-        .post("https://resebackend.herokuapp.com/api/mail", sendData)
+      this.$axios
+        .post("https://resebackend.herokuapp.com/api/mail/", sendData)
         .then(() => {
           this.$nuxt.$emit("setLoading");
           alert("メールを送信しました");
         });
     },
     selectUser(permissionId) {
-      this.address = this.userLists
+      this.address = this.$store.state.users.userLists
         .filter((userList) => {
           return userList.permission_id === permissionId;
         })

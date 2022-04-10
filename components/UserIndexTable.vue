@@ -4,21 +4,24 @@
       <tr class="th-container">
         <th>
           <input
-            v-model="search.userName"
+            v-bind:value="$store.state.users.search.name"
+            v-on:change="searchName($event)"
             type="search"
             placeholder="ユーザー名"
           />
         </th>
         <th class="th-email">
           <input
-            v-model="search.userEmail"
+            v-bind:value="$store.state.users.search.email"
+            v-on:change="searchEmail($event)"
             type="search"
             placeholder="メールアドレス"
           />
         </th>
         <th>
           <select
-            v-model="search.userPermissionId"
+            v-bind:value="$store.state.users.search.permissionId"
+            v-on:change="searchPermissionId($event)"
             class="userPermissionId"
           >
             <option value="">ユーザー区分</option>
@@ -67,23 +70,25 @@
 </template>
 <script>
 export default {
-  props: ["userLists"],
   data() {
     return {
-      pageCount: this.userLists.length,
+      pageCount: this.$store.state.users.userLists.length,
       paginate: {
         currentPage: 1,
         parPage: 10,
       },
-      search: {
-        userName: "",
-        userEmail: "",
-        userPermissionId: "",
-        userStatus:"",
-      },
     };
   },
   methods: {
+    searchName(event) {
+      this.$store.commit("users/setSearchName", event.target.value);
+    },
+    searchEmail(event) {
+      this.$store.commit("users/setSearchEmail", event.target.value);
+    },
+    searchPermissionId(event) {
+      this.$store.commit("users/setSearchPermissionId", event.target.value);
+    },
     async deleteUser(id) {
       if (window.confirm("ユーザー情報を削除いたしますか？")) {
         await this.$axios.delete("https://resebackend.herokuapp.com/api/user/" + id);
@@ -101,33 +106,8 @@ export default {
   computed: {
     /*検索内容から検索結果を表示*/
     searchAndPaginateUserLists() {
-      let searchAndPaginateUserLists = this.userLists;
-      if (this.search.userName) {
-        searchAndPaginateUserLists = searchAndPaginateUserLists.filter(
-          (searchAndPaginateUserList) => {
-            return searchAndPaginateUserList.name.includes(
-              this.search.userName
-            );
-          }
-        );
-      }
-      if (this.search.userEmail) {
-        searchAndPaginateUserLists = searchAndPaginateUserLists.filter(
-          (searchAndPaginateUserList) => {
-            return searchAndPaginateUserList.email.includes(
-              this.search.userEmail
-            );
-          }
-        );
-      }
-      if (this.search.userPermissionId) {
-        searchAndPaginateUserLists = searchAndPaginateUserLists.filter(
-          (searchAndPaginateUserList) => {
-            return searchAndPaginateUserList.permission_id === this.search.userPermissionId;
-          }
-        );
-      }
-      this.pageCount = this.userLists.length;
+      let searchAndPaginateUserLists = this.$store.getters["users/getSearchUserLists"]();
+      this.pageCount = this.$store.state.users.userLists.length;
       this.pageCount = searchAndPaginateUserLists.length;
       let end = this.paginate.currentPage * this.paginate.parPage;
       let start = end - this.paginate.parPage;

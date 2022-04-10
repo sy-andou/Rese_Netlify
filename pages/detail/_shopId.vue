@@ -6,57 +6,58 @@
           <div class="shop-ttl-container">
             <NuxtLink to="/"><img src="/img/return.png" /></NuxtLink>
             <h3 v-on:click="showShop($route.params.shopId)" class="shop-name">
-              {{ shopList.name }}
+              {{ $store.state.shops.shopList.name }}
             </h3>
           </div>
           <div　class="evaluation-container">
             <p class="evaluation-star">
               <span
                 class="star5_rating"
-                v-bind:data-rate='evaluationAvg'>
+                v-bind:data-rate='$store.state.shops.shopList.evaluationAvg'>
               </span>
             </p>
-            <p class="star-number">{{evaluationAvg}}</p>
+            <p class="star-number">{{$store.state.shops.shopList.evaluationAvg}}</p>
           </div>
         </div>
         <img
-          v-bind:src="shopList.img_pass"
+          v-bind:src="$store.state.shops.shopList.img_pass"
           v-on:click="showShop(shopList.id)" class="shop-img"
         />
         <div>
           <div class="shop-btn-container">
             <div class="shop-tag">
-              <p v-on:click="indexShopArea(areaList.id)"> #{{ areaList.area }}
+              <p v-on:click="indexShopArea(areaList.id)"> #{{ $store.state.shops.shopList.area.area }}
               </p>
               <p v-on:click="indexShopGenre(genreList.id)">
-                #{{ genreList.genre }}
+                #{{ $store.state.shops.shopList.genre.genre }}
               </p>
             </div>
             <div v-if="$auth.loggedIn" class="favorite-container">
-              <img                  v-if="findFavoriteShop(shopList.id)"
-                v-on:click="deleteFavorite(shopList.id)"
+              <img
+                v-if="favoriteCheck"
+                v-on:click="deleteFavorite"
                 src="/img/heartPink.png"
                 class="favorite-icon"
               />
               <img
                 v-else
-                v-on:click="insertFavorite(shopList.id)"
+                v-on:click="insertFavorite"
                 src="/img/heartGray.png"
                 class="unfavorite-icon"/>
             </div>
           </div>
-          <p class="shop-summary">{{ shopList.summary }}</p>
+          <p class="shop-summary">{{ $store.state.shops.shopList.summary }}</p>
         </div>
       </div>
       <div class="review-comment-wrapper">
         <h5>レビューコメント</h5>
-        <div class="review-comment-container">
-          <p v-for="reviewList in createCommentLists" v-bind:key=reviewList.id v-if="reviewList.comment" class="review-comment">{{reviewList.comment}}</p>
+        <div v-for="reserveList in reviewLists" v-bind:key="reserveList.id" class="review-comment-container">
+          <p class="review-comment">{{reserveList.review.comment}}</p>
         </div>
       </div>
     </div>
-    <div v-for="shopList in shopLists" class="reserve-form-container">
-      <ReserveForm v-bind:shop-list="shopList" />
+    <div class="reserve-form-container">
+      <ReserveForm />
     </div>
   </div>
 </template>
@@ -64,103 +65,55 @@
 export default {
   data() {
     return {
-      shopList: {},
-      shopLists: [],
-      reviewLists:[],
-      areaList: {},
-      genreList: {},
-      favoriteLists: [],
-      reserveLists:[],
     };
   },
   methods: {
-    async showShop(id) {
-      const shopData = await this.$axios.get(
-        "https://resebackend.herokuapp.com/api/shop/" + id
-      );
-      this.shopLists = shopData.data.data;
-      this.shopList = this.shopLists[0];
-      this.areaList = this.shopList.area;
-      this.genreList = this.shopList.genre;
-      this.favoriteLists = this.shopList.favorite;
-      this.reserveLists =this.shopList.reserve;
-      this.reviewLists=this.reserveLists.map((reserveList)=>{
-        return reserveList.review;
-      })
-      .filter((reviewList)=>{
-          return reviewList!==null;
-      })
-      .filter((reviewList)=>{
-          return reviewList.evaluation!==null;
-      })
-      .sort((reviewA, reviewB) => {
-        if (reviewA.id < reviewB.id) {
-          return 1;
-        } else {
-          return -1;
-        }
-      });
-    },
-    indexShopArea(id) {
-      this.$router.push({ name: "index", params: { areaId: id } });
-    },
-    indexShopGenre(id) {
-      this.$router.push({ name: "index", params: { genreId: id } });
-    },
-    async insertFavorite(shopId) {
+    async insertFavorite() {
       const sendData = {
         user_id: this.$auth.user.id,
-        shop_id: shopId,
+        shop_id: this.$route.params.shopId,
       };
-      await this.$axios.post("https://resebackend.herokuapp.com/api/favorite", sendData);
+      await this.$axios.post("http://127.0.0.1:8000/api/favorite/", sendData);
       alert('お気に入りに追加しました。');
-      this.showShop(shopId);
+      this.$store.dispatch("shops/getShopsData");
     },
-    async deleteFavorite(shopId) {
-      const favorite = this.shopList.favorite.find((favorite) => {
-        return favorite.user_id === this.$auth.user.id;
-      });
-      const favoriteId = favorite.id;
+    async deleteFavorite() {
+      const favoriteId = this.$store.state.shops.shopList.favorite.find((favoriteList)=>{
+        return favoriteList.user_id===this.$auth.user.id;
+      }).id;
       await this.$axios.delete(
-        "https://resebackend.herokuapp.com/api/favorite" + favoriteId
+        "http://127.0.0.1:8000/api/favorite/" + favoriteId
       );
       alert('お気に入りから削除しました。');
-      this.showShop(shopId);
-    },
-    findFavoriteShop(shopId) {
-      const findFavorite = this.favoriteLists.find((favorite) => {
-        return favorite.user_id === this.$auth.user.id;
-      });
-      if (Boolean(findFavorite)) {
-        return true;
-      } else {
-        return false;
-      }
+      this.$store.dispatch("shops/getShopsData");
     },
   },
   computed: {
-    evaluationAvg(){
-      if(this.reviewLists.length!==0){
-        const evaluationArry = this.reviewLists.map((reviewList)=>{
-          return reviewList.evaluation;
-        });
-        let sumevaluation=0;
-        evaluationArry.forEach((evaluation)=>{
-          return  sumevaluation = sumevaluation + evaluation;
-        });
-        return Math.round(sumevaluation/evaluationArry.length*10)/10;
-      }
-      else{
-        return 0;
+    favoriteCheck() {
+      return this.$store.getters["shops/checkFavorite"](this.$store. state.shops.shopList.id,this.$auth.user.id)
+    },
+    reviewLists() {
+      if(this.$store.state.shops.shopList.reserve){
+        return this.$store.state.shops.shopList.reserve
+          .filter((reserveList) => {
+            return reserveList.review !== null;
+          })
+          .filter((reserveList) => {
+            return reserveList.review.evaluation !== null;
+          });
       }
     },
-    createCommentLists(){
-      return this.reviewLists.slice(0,5);
+  },
+  async created() {
+    if(this.$store.state.shops.shopLists.length==0){
+      await this.$store.dispatch("shops/getShopsData");
+      this.$store.commit("shops/setShopList",this.$route.params.shopId);
+    }
+    else{
+      this.$store.commit("shops/setShopList",this.$route.params.shopId);
     }
   },
-  created() {
-    this.showShop(this.$route.params.shopId);
-  },
+  mounted(){},
 };
 </script>
 

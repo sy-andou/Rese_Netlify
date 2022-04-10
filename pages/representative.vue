@@ -23,20 +23,19 @@
             <ShopCreateForm
               v-on:reload="getShopData"
               v-on:receivePreviewData="displayPreview"
-              v-bind:area-lists="areaLists"
-              v-bind:genre-lists="genreLists"
             />
           </div>
         </div>
       </div>
       <div v-else-if="display.shopUpdate" class="shop-update-container">
         <h4>店舗情報更新・削除</h4>
-        <div v-for="shopList in shopLists" v-bind:key="shopList.id">
+        <div
+          v-for="shopList in getRepresentativeShopLists"
+          v-bind:key="shopList.id"
+        >
           <ShopUpdate
             v-on:reload="getShopData"
             v-bind:shop-list="shopList"
-            v-bind:area-lists="areaLists"
-            v-bind:genre-lists="genreLists"
             class="shop-update"
           />
         </div>
@@ -46,7 +45,7 @@
           <h4>予約情報確認</h4>
         </div>
         <div>
-          <reserveCheckTable v-bind:reserve-lists="reserveLists" />
+          <reserveCheckTable />
         </div>
       </div>
       <div v-else-if="display.reviewCheck" class="review-create-container">
@@ -54,7 +53,7 @@
           <h4>レビュー確認</h4>
         </div>
         <div>
-          <ReviewCheckTable v-bind:review-lists="reviewLists" />
+          <ReviewCheckTable />
         </div>
       </div>
     </div>
@@ -67,10 +66,6 @@ export default {
   data() {
     return {
       shopLists: [],
-      reserveLists: [],
-      reviewLists: [],
-      areaLists: [],
-      genreLists: [],
       previewData: {},
       display: {
         shopCreate: true,
@@ -78,63 +73,9 @@ export default {
         reserveCheck: false,
         reviewCheck: false,
       },
-      search: {
-        shopId: "",
-        userId: "",
-        reserveDate: "",
-        reserveTime: "",
-        reserveStatus: "",
-        reserveTitle: "",
-        reserveNumber: "",
-      },
     };
   },
   methods: {
-    async getReserveData() {
-      const reserveData = await this.$axios.get(
-        "https://resebackend.herokuapp.com/api/reserve"
-      );
-      this.reserveLists = reserveData.data.data
-        .filter((reserveList) => {
-          return reserveList.shop.user_id === this.$auth.user.id;
-        })
-        .sort((reserveA, reserveB) => {
-          if (reserveA.id < reserveB.id) {
-            return 1;
-          } else {
-            return -1;
-          }
-        });
-      this.reviewLists = this.reserveLists
-        .filter((reserveList) => {
-          return reserveList.review !== null;
-        })
-        .filter((reserveList) => {
-          return reserveList.review.evaluation !== null;
-        });
-    },
-    async getShopData() {
-      const shopData = await this.$axios.get(
-        "https://resebackend.herokuapp.com/api/shop"
-      );
-      this.shopLists = shopData.data.data.filter((shopList) => {
-        return shopList.user_id === this.$auth.user.id;
-      });
-    },
-    /*地域のデータを一覧で取得*/
-    async getAreaData() {
-      const areaData = await this.$axios.get(
-        "https://resebackend.herokuapp.com/api/area"
-      );
-      this.areaLists = areaData.data.data;
-    },
-    /*ジャンルのデータを一覧で取得*/
-    async getGenreData() {
-      const genreData = await this.$axios.get(
-        "https://resebackend.herokuapp.com/api/genre"
-      );
-      this.genreLists = genreData.data.data;
-    },
     displayPreview(previewData) {
       this.previewData = previewData;
     },
@@ -171,12 +112,23 @@ export default {
       }
     },
   },
-  computed: {},
-  created() {
-    this.getReserveData();
-    this.getShopData();
-    this.getAreaData();
-    this.getGenreData();
+  computed: {
+    getRepresentativeShopLists() {
+      return this.$store.getters["shops/getRepresentativeShopLists"](
+        this.$auth.user.id
+      );
+    },
+  },
+  async created() {
+    this.$store.dispatch("areas/getAreasData");
+    this.$store.dispatch("genres/getgenresData");
+    this.$store.dispatch("shops/getShopsData");
+    await this.$store.dispatch("reserves/getReservesData");
+    this.$store.commit(
+      "reserves/setRepresentativeReserveLists",
+      this.$auth.user.id,
+      this.$auth.user.permission_id
+    );
   },
 };
 </script>
@@ -223,8 +175,6 @@ h4 {
 }
 .reserveStatusStyle {
   border-radius: 2px;
-}
-.review-create-container{
 }
 @media screen and (max-width: 768px) {
   .sidebar {
