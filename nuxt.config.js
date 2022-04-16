@@ -7,7 +7,7 @@ export default {
 
   // Global page headers: https://go.nuxtjs.dev/config-head
   head: {
-    title: 'Rese-frontend',
+    title: 'RSS',
     htmlAttrs: {
       lang: 'en'
     },

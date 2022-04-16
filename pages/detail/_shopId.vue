@@ -107,7 +107,7 @@ export default {
   async created() {
     if(this.$store.state.shops.shopLists.length==0){
       await this.$store.dispatch("shops/getShopsData");
-      this.$store.commit("shops/setShopList",this.$route.params.shopId);
+      await this.$store.commit("shops/setShopList",this.$route.params.shopId);
     }
     else{
       this.$store.commit("shops/setShopList",this.$route.params.shopId);
