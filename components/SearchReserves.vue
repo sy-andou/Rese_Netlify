@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="serchFrom-wrapper">
     <form　onsubmit="return false">
         <select
           v-on:change="searchShopId($event)"
@@ -204,7 +204,7 @@ export default {
 };
 </script>
 <style scoped>
-  div{
+  .serchFrom-wrapper{
     display:flex;
     justify-content:flex-end;
     margin:20px 0;
@@ -235,18 +235,26 @@ export default {
     cursor:pointer;
   }
   @media screen and (max-width: 768px) {
+    .serchFrom-wrapper{
+      margin:0;
+      flex-direction:column;
+    }
     form {
       flex-direction:column;
-      margin:70px 0 30px 0;
+      margin:30px auto 0 auto;
+      width:90%;
     }
     form > select,
-    form > input {
+    form > input[type="search"] {
       width:100%;
-      border-radius:5px;
       over-flow:hidden;
+      border-radius:0;
+      background-color:white;
     }
-    select:first-child {
-      border-radius:5px ;
+    input[type="submit"]{
+      margin:0 auto;
+      width:90%;
+      border-radius:0;
     }
 }
 </style>

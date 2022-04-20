@@ -108,6 +108,7 @@ export default{
       width:100%;
       over-flow:hidden;
       border-radius:0;
+      background-color:white;
     }
     input[type="submit"]{
       margin:0 auto;
