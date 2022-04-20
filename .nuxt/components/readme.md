@@ -7,6 +7,7 @@ You can directly use them in pages and other components without the need to impo
 **Tip:** If a component is conditionally rendered with `v-if` and is big, it is better to use `Lazy` or `lazy-` prefix to lazy load.
 
 - `<Header>` | `<header>` (components/Header.vue)
+- `<Loading>` | `<loading>` (components/Loading.vue)
 - `<LoginForm>` | `<login-form>` (components/LoginForm.vue)
 - `<MailForm>` | `<mail-form>` (components/MailForm.vue)
 - `<NuxtLogo>` | `<nuxt-logo>` (components/NuxtLogo.vue)
@@ -15,6 +16,8 @@ You can directly use them in pages and other components without the need to impo
 - `<ReserveForm>` | `<reserve-form>` (components/ReserveForm.vue)
 - `<ReviewCheckTable>` | `<review-check-table>` (components/ReviewCheckTable.vue)
 - `<ReviewForm>` | `<review-form>` (components/ReviewForm.vue)
+- `<SearchReserves>` | `<search-reserves>` (components/SearchReserves.vue)
+- `<SearchShops>` | `<search-shops>` (components/SearchShops.vue)
 - `<ShopCreateDetail>` | `<shop-create-detail>` (components/ShopCreateDetail.vue)
 - `<ShopCreateForm>` | `<shop-create-form>` (components/ShopCreateForm.vue)
 - `<ShopIndex>` | `<shop-index>` (components/ShopIndex.vue)

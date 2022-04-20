@@ -1,17 +1,17 @@
 <template>
-<div>
-  <form onsubmit="return false">
-    <select v-bind:value="$store.state.areas.selectAreaId" v-on:change="selectAreaId($event)">
-      <option value="">全都道府県</option>
-      <option　v-for="areaList in createAreaLists" v-bind:value="areaList.id">{{areaList.area}}</option>
-    </select>
-    <select v-bind:value="$store.state.genres.selectGenreId" v-on:change="selectGenreId($event)">
-      <option value="">全ジャンル</option>
-      <option　v-for="genreList in createGenreLists" v-bind:value="genreList.id">{{genreList.genre}}</option>
-    </select>
-    <input　v-bind:value="$store.state.shops.inputShopName" v-on:change.prevent="inputShopName" type="search" placeholder="search..." />
-  </form>
-  <input v-on:click="searchReset" type="submit" value="検索リセット"/>
+  <div class="serchFrom-wrapper">
+    <form onsubmit="return false">
+      <select v-bind:value="$store.state.areas.selectAreaId" v-on:change="selectAreaId($event)">
+        <option value="">全都道府県</option>
+        <option　v-for="areaList in createAreaLists" v-bind:value="areaList.id">{{areaList.area}}</option>
+      </select>
+      <select v-bind:value="$store.state.genres.selectGenreId" v-on:change="selectGenreId($event)">
+        <option value="">全ジャンル</option>
+        <option　v-for="genreList in createGenreLists" v-bind:value="genreList.id">{{genreList.genre}}</option>
+      </select>
+      <input　v-bind:value="$store.state.shops.inputShopName" v-on:change.prevent="inputShopName" type="search" placeholder="search..." />
+    </form>
+    <input v-on:click="searchReset" type="submit" value="検索リセット"/>
   </div>
 </template>
 <script>
@@ -63,7 +63,7 @@ export default{
 }
 </script>
 <style scoped>
-  div{
+  .serchFrom-wrapper{
     display:flex;
     justify-content:flex-end;
     margin:20px 50px;
@@ -94,18 +94,25 @@ export default{
     cursor:pointer;
   }
   @media screen and (max-width: 768px) {
+    .serchFrom-wrapper{
+      margin:0;
+      flex-direction:column;
+    }
     form {
       flex-direction:column;
-      margin:70px 0 30px 0;
+      margin:30px auto 0 auto;
+      width:90%;
     }
     form > select,
-    form > input {
+    form > input[type="search"] {
       width:100%;
-      border-radius:5px;
       over-flow:hidden;
+      border-radius:0;
     }
-    select:first-child {
-      border-radius:5px ;
+    input[type="submit"]{
+      margin:0 auto;
+      width:90%;
+      border-radius:0;
     }
 }
 </style>

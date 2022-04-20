@@ -2,6 +2,9 @@
   "Header": {
     "description": "Auto imported from components/Header.vue"
   },
+  "Loading": {
+    "description": "Auto imported from components/Loading.vue"
+  },
   "LoginForm": {
     "description": "Auto imported from components/LoginForm.vue"
   },
@@ -25,6 +28,12 @@
   },
   "ReviewForm": {
     "description": "Auto imported from components/ReviewForm.vue"
+  },
+  "SearchReserves": {
+    "description": "Auto imported from components/SearchReserves.vue"
+  },
+  "SearchShops": {
+    "description": "Auto imported from components/SearchShops.vue"
   },
   "ShopCreateDetail": {
     "description": "Auto imported from components/ShopCreateDetail.vue"

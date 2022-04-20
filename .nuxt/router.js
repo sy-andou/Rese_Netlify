@@ -4,17 +4,17 @@ import { normalizeURL, decode } from 'ufo'
 import { interopDefault } from './utils'
 import scrollBehavior from './router.scrollBehavior.js'
 
-const _9e29b04c = () => interopDefault(import('../pages/administrator.vue' /* webpackChunkName: "pages/administrator" */))
-const _0fb98c85 = () => interopDefault(import('../pages/done.vue' /* webpackChunkName: "pages/done" */))
-const _21886b76 = () => interopDefault(import('../pages/login.vue' /* webpackChunkName: "pages/login" */))
-const _75b02004 = () => interopDefault(import('../pages/mypage.vue' /* webpackChunkName: "pages/mypage" */))
-const _a3832316 = () => interopDefault(import('../pages/pay.vue' /* webpackChunkName: "pages/pay" */))
-const _00a271a6 = () => interopDefault(import('../pages/register.vue' /* webpackChunkName: "pages/register" */))
-const _77339940 = () => interopDefault(import('../pages/representative.vue' /* webpackChunkName: "pages/representative" */))
-const _73c70755 = () => interopDefault(import('../pages/detail/_shopId.vue' /* webpackChunkName: "pages/detail/_shopId" */))
-const _735bdf1d = () => interopDefault(import('../pages/reserves/_reserveId.vue' /* webpackChunkName: "pages/reserves/_reserveId" */))
-const _2eeaba8e = () => interopDefault(import('../pages/thanks/_status.vue' /* webpackChunkName: "pages/thanks/_status" */))
-const _57e0c85f = () => interopDefault(import('../pages/index.vue' /* webpackChunkName: "pages/index" */))
+const _57647b7a = () => interopDefault(import('../pages/administrator.vue' /* webpackChunkName: "pages/administrator" */))
+const _78e5a4e5 = () => interopDefault(import('../pages/done.vue' /* webpackChunkName: "pages/done" */))
+const _444141d4 = () => interopDefault(import('../pages/login.vue' /* webpackChunkName: "pages/login" */))
+const _d8a11f44 = () => interopDefault(import('../pages/mypage.vue' /* webpackChunkName: "pages/mypage" */))
+const _1cfdca15 = () => interopDefault(import('../pages/pay.vue' /* webpackChunkName: "pages/pay" */))
+const _4b4b5a06 = () => interopDefault(import('../pages/register.vue' /* webpackChunkName: "pages/register" */))
+const _25d15880 = () => interopDefault(import('../pages/representative.vue' /* webpackChunkName: "pages/representative" */))
+const _c70fb096 = () => interopDefault(import('../pages/detail/_shopId.vue' /* webpackChunkName: "pages/detail/_shopId" */))
+const _502ffabd = () => interopDefault(import('../pages/reserves/_reserveId.vue' /* webpackChunkName: "pages/reserves/_reserveId" */))
+const _579bdaee = () => interopDefault(import('../pages/thanks/_status.vue' /* webpackChunkName: "pages/thanks/_status" */))
+const _1437bbff = () => interopDefault(import('../pages/index.vue' /* webpackChunkName: "pages/index" */))
 
 const emptyFn = () => {}
 
@@ -29,47 +29,47 @@ export const routerOptions = {
 
   routes: [{
     path: "/administrator",
-    component: _9e29b04c,
+    component: _57647b7a,
     name: "administrator"
   }, {
     path: "/done",
-    component: _0fb98c85,
+    component: _78e5a4e5,
     name: "done"
   }, {
     path: "/login",
-    component: _21886b76,
+    component: _444141d4,
     name: "login"
   }, {
     path: "/mypage",
-    component: _75b02004,
+    component: _d8a11f44,
     name: "mypage"
   }, {
     path: "/pay",
-    component: _a3832316,
+    component: _1cfdca15,
     name: "pay"
   }, {
     path: "/register",
-    component: _00a271a6,
+    component: _4b4b5a06,
     name: "register"
   }, {
     path: "/representative",
-    component: _77339940,
+    component: _25d15880,
     name: "representative"
   }, {
     path: "/detail/:shopId?",
-    component: _73c70755,
+    component: _c70fb096,
     name: "detail-shopId"
   }, {
     path: "/reserves/:reserveId?",
-    component: _735bdf1d,
+    component: _502ffabd,
     name: "reserves-reserveId"
   }, {
     path: "/thanks/:status?",
-    component: _2eeaba8e,
+    component: _579bdaee,
     name: "thanks-status"
   }, {
     path: "/",
-    component: _57e0c85f,
+    component: _1437bbff,
     name: "index"
   }],
 

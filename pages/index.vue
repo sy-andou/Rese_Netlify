@@ -37,7 +37,7 @@ export default {
   flex-wrap: wrap;
 }
 .shop-index-container {
-  margin: 15px 0;
+  margin: 15px auto;
 }
 @media screen and (max-width: 768px) {
   .shop-index {

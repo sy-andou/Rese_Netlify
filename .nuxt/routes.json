@@ -2,78 +2,78 @@
   {
     "name": "administrator",
     "path": "/administrator",
-    "component": "/Users/shou_andou/Desktop/COACHTECH_全般/advance_term/Rese_production /Rese_Netlify_frontend/pages/administrator.vue",
+    "component": "/Users/shou_andou/Desktop/COACHTECH_全般/advance_term/Rese_production/Rese_Netlify_frontend/pages/administrator.vue",
     "chunkName": "pages/administrator",
-    "_name": "_9e29b04c"
+    "_name": "_57647b7a"
   },
   {
     "name": "done",
     "path": "/done",
-    "component": "/Users/shou_andou/Desktop/COACHTECH_全般/advance_term/Rese_production /Rese_Netlify_frontend/pages/done.vue",
+    "component": "/Users/shou_andou/Desktop/COACHTECH_全般/advance_term/Rese_production/Rese_Netlify_frontend/pages/done.vue",
     "chunkName": "pages/done",
-    "_name": "_0fb98c85"
+    "_name": "_78e5a4e5"
   },
   {
     "name": "login",
     "path": "/login",
-    "component": "/Users/shou_andou/Desktop/COACHTECH_全般/advance_term/Rese_production /Rese_Netlify_frontend/pages/login.vue",
+    "component": "/Users/shou_andou/Desktop/COACHTECH_全般/advance_term/Rese_production/Rese_Netlify_frontend/pages/login.vue",
     "chunkName": "pages/login",
-    "_name": "_21886b76"
+    "_name": "_444141d4"
   },
   {
     "name": "mypage",
     "path": "/mypage",
-    "component": "/Users/shou_andou/Desktop/COACHTECH_全般/advance_term/Rese_production /Rese_Netlify_frontend/pages/mypage.vue",
+    "component": "/Users/shou_andou/Desktop/COACHTECH_全般/advance_term/Rese_production/Rese_Netlify_frontend/pages/mypage.vue",
     "chunkName": "pages/mypage",
-    "_name": "_75b02004"
+    "_name": "_d8a11f44"
   },
   {
     "name": "pay",
     "path": "/pay",
-    "component": "/Users/shou_andou/Desktop/COACHTECH_全般/advance_term/Rese_production /Rese_Netlify_frontend/pages/pay.vue",
+    "component": "/Users/shou_andou/Desktop/COACHTECH_全般/advance_term/Rese_production/Rese_Netlify_frontend/pages/pay.vue",
     "chunkName": "pages/pay",
-    "_name": "_a3832316"
+    "_name": "_1cfdca15"
   },
   {
     "name": "register",
     "path": "/register",
-    "component": "/Users/shou_andou/Desktop/COACHTECH_全般/advance_term/Rese_production /Rese_Netlify_frontend/pages/register.vue",
+    "component": "/Users/shou_andou/Desktop/COACHTECH_全般/advance_term/Rese_production/Rese_Netlify_frontend/pages/register.vue",
     "chunkName": "pages/register",
-    "_name": "_00a271a6"
+    "_name": "_4b4b5a06"
   },
   {
     "name": "representative",
     "path": "/representative",
-    "component": "/Users/shou_andou/Desktop/COACHTECH_全般/advance_term/Rese_production /Rese_Netlify_frontend/pages/representative.vue",
+    "component": "/Users/shou_andou/Desktop/COACHTECH_全般/advance_term/Rese_production/Rese_Netlify_frontend/pages/representative.vue",
     "chunkName": "pages/representative",
-    "_name": "_77339940"
+    "_name": "_25d15880"
   },
   {
     "name": "detail-shopId",
     "path": "/detail/:shopId?",
-    "component": "/Users/shou_andou/Desktop/COACHTECH_全般/advance_term/Rese_production /Rese_Netlify_frontend/pages/detail/_shopId.vue",
+    "component": "/Users/shou_andou/Desktop/COACHTECH_全般/advance_term/Rese_production/Rese_Netlify_frontend/pages/detail/_shopId.vue",
     "chunkName": "pages/detail/_shopId",
-    "_name": "_73c70755"
+    "_name": "_c70fb096"
   },
   {
     "name": "reserves-reserveId",
     "path": "/reserves/:reserveId?",
-    "component": "/Users/shou_andou/Desktop/COACHTECH_全般/advance_term/Rese_production /Rese_Netlify_frontend/pages/reserves/_reserveId.vue",
+    "component": "/Users/shou_andou/Desktop/COACHTECH_全般/advance_term/Rese_production/Rese_Netlify_frontend/pages/reserves/_reserveId.vue",
     "chunkName": "pages/reserves/_reserveId",
-    "_name": "_735bdf1d"
+    "_name": "_502ffabd"
   },
   {
     "name": "thanks-status",
     "path": "/thanks/:status?",
-    "component": "/Users/shou_andou/Desktop/COACHTECH_全般/advance_term/Rese_production /Rese_Netlify_frontend/pages/thanks/_status.vue",
+    "component": "/Users/shou_andou/Desktop/COACHTECH_全般/advance_term/Rese_production/Rese_Netlify_frontend/pages/thanks/_status.vue",
     "chunkName": "pages/thanks/_status",
-    "_name": "_2eeaba8e"
+    "_name": "_579bdaee"
   },
   {
     "name": "index",
     "path": "/",
-    "component": "/Users/shou_andou/Desktop/COACHTECH_全般/advance_term/Rese_production /Rese_Netlify_frontend/pages/index.vue",
+    "component": "/Users/shou_andou/Desktop/COACHTECH_全般/advance_term/Rese_production/Rese_Netlify_frontend/pages/index.vue",
     "chunkName": "pages/index",
-    "_name": "_57e0c85f"
+    "_name": "_1437bbff"
   }
 ]
