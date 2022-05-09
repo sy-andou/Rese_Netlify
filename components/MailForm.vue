@@ -97,7 +97,6 @@ export default {
   },
   methods: {
     async sendMail() {
-      this.$nuxt.$emit("setLoading");
       const sendData = {
         address: this.address,
         subject: this.subject,
