@@ -24,7 +24,8 @@ export default {
       this.messageSecond = "再度、メールからリンクをクリックしてください。";
     } else if (this.$route.params.status === "pre_register") {
       this.messageFirst = "仮登録が完了しました。";
-      this.messageSecond = "メールのリンクをクリックして本登録をしてください。";
+      this.messageSecond =
+        "送付されたメールのリンクをクリックして本登録をしてください。";
     } else if (this.$route.params.status === "invalid") {
       this.messageFirst = "無効なトークンです。";
     } else if (this.$route.params.status === "exist") {
