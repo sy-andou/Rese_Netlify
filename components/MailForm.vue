@@ -96,19 +96,18 @@ export default {
     };
   },
   methods: {
-    sendMail() {
+    async sendMail() {
       this.$nuxt.$emit("setLoading");
       const sendData = {
         address: this.address,
         subject: this.subject,
         text: this.text,
       };
-      this.$axios
-        .post("https://resebackend.herokuapp.com/api/mail", sendData)
-        .then(() => {
-          this.$nuxt.$emit("setLoading");
-          alert("メールを送信しました");
-        });
+      await this.$axios.post(
+        "https://resebackend.herokuapp.com/api/mail",
+        sendData
+      );
+      await alert("メールを送信しました");
     },
     selectUser(permissionId) {
       this.address = this.$store.state.users.userLists
