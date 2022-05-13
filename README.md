@@ -64,3 +64,5 @@
 　yarn add vuejs-paginate<br>
 ・tymon/jwt-auth<br>
 　composer require tymon/jwt-auth<br>
+ ## ER図<br>
+ ![Rese_relation.drawio.png](/Rese_relation.drawio.png)
